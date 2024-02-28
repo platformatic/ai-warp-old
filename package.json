@@ -1,0 +1,38 @@
+{
+  "name": "ai-warp",
+  "version": "0.0.1",
+  "main": "dist/index.js",
+  "bin": {
+    "create-ai-warp": "./dist/cli/create.js",
+    "start-ai-warp": "./dist/cli/start.js"
+  },
+  "scripts": {
+    "build": "tsc --build",
+    "build:config": "node ./dist/lib/schema.js | json2ts > config.d.ts",
+    "clean": "rm -fr ./dist",
+    "lint": "ts-standard | snazzy",
+    "lint:fix": "ts-standard --fix | snazzy"
+  },
+  "engines": {
+    "node": "^18.8.0 || >=20.6.0"
+  },
+  "devDependencies": {
+    "fastify": "^4.26.0",
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "@fastify/error": "^3.4.1",
+    "@fastify/type-provider-typebox": "^4.0.0",
+    "@mistralai/mistralai": "^0.1.3",
+    "@platformatic/config": "^1.24.0",
+    "@platformatic/generators": "^1.24.0",
+    "@platformatic/service": "^1.24.0",
+    "json-schema-to-typescript": "^13.0.0",
+    "openai": "^4.28.4",
+    "snazzy": "^9.0.0",
+    "ts-standard": "^12.0.2"
+  },
+  "overrides": {
+    "minimatch": "^5.0.0"
+  }
+}
