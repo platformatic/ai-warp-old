@@ -38,6 +38,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
       // TODO: sanitizing/filtering response
 
       return response
-    }
+    },
+    rateLimiting: {}
   }
 }

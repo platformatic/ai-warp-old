@@ -240,6 +240,88 @@ export interface AiWarpConfig {
     prefix?: string;
     suffix?: string;
   };
+  auth?: {
+    /**
+     * If true, any unauthenticated requests will be blocked
+     */
+    required?: boolean;
+    jwt?: {
+      jwks?:
+        | boolean
+        | {
+            max?: number;
+            ttl?: number;
+            issuersWhitelist?: string[];
+            providerDiscovery?: boolean;
+            jwksPath?: string;
+            timeout?: number;
+            [k: string]: unknown;
+          };
+      secret:
+        | string
+        | {
+            public: string;
+            private?: string;
+            [k: string]: unknown;
+          };
+      decode?: {
+        complete?: boolean;
+        checkTyp?: string;
+        [k: string]: unknown;
+      };
+      sign?: {
+        expiresIn?: number | string;
+        notBefore?: number | string;
+        key?: string;
+        [k: string]: unknown;
+      };
+      verify?: {
+        maxAge: number | string;
+        onlyCookie: boolean;
+        key?: string;
+        [k: string]: unknown;
+      };
+      cookie?: {
+        cookieName: string;
+        signed: boolean;
+        [k: string]: unknown;
+      };
+      messages?: {
+        badRequestErrorMessage?: string;
+        badCookieRequestErrorMessage?: string;
+        noAuthorizationInHeaderMessage?: string;
+        noAuthorizationInCookieMessage?: string;
+        authorizationTokenExpiredMessage?: string;
+        authorizationTokenInvalid?: string;
+        authorizationTokenUntrusted?: string;
+        authorizationTokenUnsigned?: string;
+        [k: string]: unknown;
+      };
+      jwtDecode?: string;
+      namespace?: string;
+      jwtVerify?: string;
+      jwtSign?: string;
+      decoratorName?: string;
+      [k: string]: unknown;
+    };
+    webhook?: {
+      url: string;
+      [k: string]: unknown;
+    };
+    [k: string]: unknown;
+  };
+  rateLimiting?: {
+    max?: number;
+    timeWindow?: number | string;
+    hook?: "onRequest" | "preParsing" | "preValidation" | "preHandler";
+    cache?: number;
+    allowList?: string[];
+    continueExceeding?: boolean;
+    skipOnError?: boolean;
+    ban?: number;
+    enableDraftSpec?: boolean;
+    [k: string]: unknown;
+  };
 }
 export interface OpenTelemetry {
   /**
