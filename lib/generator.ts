@@ -16,10 +16,9 @@ class AiWarpGenerator extends ServiceGenerator {
   getDefaultConfig (): BaseGenerator.JSONValue {
     const defaultBaseConfig = super.getDefaultConfig()
     const defaultConfig = {
-      aiProvider: {
-        model: 'openai-gpt-3.5-turbo',
-        apiKey: 'sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
-      }
+      aiProvider: 'openai',
+      aiModel: 'gpt-3.5-turbo',
+      aiApiKey: 'sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
     }
     return Object.assign({}, defaultBaseConfig, defaultConfig)
   }
@@ -29,17 +28,19 @@ class AiWarpGenerator extends ServiceGenerator {
     return [
       ...serviceConfigFieldsDefs,
       {
+        var: 'PLT_AI_PROVIDER',
+        label: 'What AI provider would you like to use? (e.g. openai, mistral)',
+        default: 'openai',
+        type: 'string'
+        // configValue: 'aiProvider'
+      },
+      {
         // TODO: is it possible to show a list of all of the models supported here?
         var: 'PLT_AI_MODEL',
         label: 'What AI model would you like to use?',
-        default: 'openai-gpt-3.5-turbo',
+        default: 'gpt-3.5-turbo',
         type: 'string'
-      },
-      {
-        var: 'PLT_AI_API_KEY',
-        label: 'What is your API key for that model?',
-        default: 'sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
-        type: 'string'
+        // configValue: 'aiModel'
       }
     ]
   }
@@ -50,15 +51,38 @@ class AiWarpGenerator extends ServiceGenerator {
     const config = {
       $schema: './stackable.schema.json',
       module: packageJson.name,
-      aiProvider: {
-        model: this.config.aiProvider.model,
-        apiKey: `{${this.getEnvVarName('PLT_AI_API_KEY')}}`
-      },
+      aiProvider: {},
       promptDecorators: {
         prefix: 'You are an AI for Acme Corp. here to answer questions anyone has.\nThe question for you to answer is: ',
         suffix: 'Please respond as consisely as possible.'
       }
     }
+    switch (this.config.aiProvider) {
+      case 'mistral':
+        config.aiProvider = {
+          mistral: {
+            model: this.config.aiModel,
+            apiKey: `{${this.getEnvVarName('PLT_AI_API_KEY')}}`
+          }
+        }
+        break
+      case 'openai':
+        config.aiProvider = {
+          openai: {
+            model: this.config.aiModel,
+            apiKey: `{${this.getEnvVarName('PLT_AI_API_KEY')}}`
+          }
+        }
+        break
+      default:
+        config.aiProvider = {
+          openai: {
+            model: this.config.aiModel,
+            apiKey: `{${this.getEnvVarName('PLT_AI_API_KEY')}}`
+          }
+        }
+    }
+
     return Object.assign({}, baseConfig, config)
   }
 
@@ -66,7 +90,6 @@ class AiWarpGenerator extends ServiceGenerator {
     super._beforePrepare()
 
     this.addEnvVars({
-      PLT_AI_MODEL: this.config.aiProvider.model ?? 'openai-gpt-3.5-turbo',
       PLT_AI_API_KEY: this.config.aiProvider.openAi ?? 'sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
     }, { overwrite: false })
 
