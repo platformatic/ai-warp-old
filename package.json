@@ -22,11 +22,13 @@
   },
   "dependencies": {
     "@fastify/error": "^3.4.1",
+    "@fastify/rate-limit": "^9.1.0",
     "@fastify/type-provider-typebox": "^4.0.0",
     "@mistralai/mistralai": "^0.1.3",
     "@platformatic/config": "^1.24.0",
     "@platformatic/generators": "^1.24.0",
     "@platformatic/service": "^1.24.0",
+    "fastify-user": "^0.3.3",
     "json-schema-to-typescript": "^13.0.0",
     "openai": "^4.28.4",
     "snazzy": "^9.0.0",

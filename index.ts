@@ -1,16 +1,30 @@
 import { platformaticService, Stackable } from '@platformatic/service'
+import fastifyUser from 'fastify-user'
+import fastifyRateLimit from '@fastify/rate-limit'
 import { schema } from './lib/schema'
 import { Generator } from './lib/generator'
 import { AiWarpConfig } from './config'
+import warpPlugin from './plugins/warp'
+import apiPlugin from './plugins/api'
 
 const stackable: Stackable<AiWarpConfig> = async function (fastify, opts) {
   await fastify.register(platformaticService, opts)
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  await fastify.register(require('./plugins/warp'), opts)
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  await fastify.register(require('./plugins/api'), opts)
 
-  // TODO: front end
+  const { config } = fastify.platformatic
+  await fastify.register(fastifyUser, config.auth)
+    .register(warpPlugin, opts) // needs to be registered here for fastify.ai to be decorated
+    .register(fastifyRateLimit, {
+      // TODO: how do we let the dev define these callbacks in between decorating fastify.ai and here?
+      max: fastify.ai.rateLimiting.max,
+      allowList: fastify.ai.rateLimiting.allowList,
+      onBanReach: fastify.ai.rateLimiting.onBanReach,
+      keyGenerator: fastify.ai.rateLimiting.keyGenerator,
+      errorResponseBuilder: fastify.ai.rateLimiting.errorResponseBuilder,
+      onExceeding: fastify.ai.rateLimiting.onExceeding,
+      onExceeded: fastify.ai.rateLimiting.onExceeded,
+      ...config.rateLimiting
+    })
+    .register(apiPlugin, opts)
 }
 
 stackable.configType = 'ai-warp-app'
