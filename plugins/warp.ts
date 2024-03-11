@@ -1,7 +1,7 @@
 /// <reference path="../index.d.ts" />
 import { FastifyInstance } from 'fastify'
 import { OpenAiProvider } from '../ai-providers/open-ai'
-import { MistralProvider } from '../ai-providers/mistral'
+import { MistralProvider } from '../ai-providers/mistral.js'
 import { AiProvider } from '../ai-providers/provider'
 import { AiWarpConfig } from '../config'
 import createError from '@fastify/error'

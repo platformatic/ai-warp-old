@@ -28,7 +28,6 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify, opts) => {
       }
     },
     handler: async (request) => {
-      // TODO auth
       let response: string
       try {
         const { prompt } = request.body
