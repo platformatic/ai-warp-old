@@ -17,8 +17,7 @@ class AiWarpGenerator extends ServiceGenerator {
     const defaultBaseConfig = super.getDefaultConfig()
     const defaultConfig = {
       aiProvider: 'openai',
-      aiModel: 'gpt-3.5-turbo',
-      aiApiKey: 'sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+      aiModel: 'gpt-3.5-turbo'
     }
     return Object.assign({}, defaultBaseConfig, defaultConfig)
   }
