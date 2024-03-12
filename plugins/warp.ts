@@ -33,9 +33,10 @@ export default async function (fastify: FastifyInstance): Promise<void> {
         decoratedPrompt = (prefix ?? '') + decoratedPrompt + (suffix ?? '')
       }
 
-      const response = await provider.ask(decoratedPrompt)
-
-      // TODO: sanitizing/filtering response
+      let response = await provider.ask(decoratedPrompt)
+      if (fastify.ai.preResponseCallback !== undefined) {
+        response = await fastify.ai.preResponseCallback(response);
+      }
 
       return response
     },
