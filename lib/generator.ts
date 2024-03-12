@@ -61,7 +61,7 @@ class AiWarpGenerator extends ServiceGenerator {
         config.aiProvider = {
           mistral: {
             model: this.config.aiModel,
-            apiKey: `{${this.getEnvVarName('PLT_AI_API_KEY')}}`
+            apiKey: `{${this.getEnvVarName('PLT_MISTRAL_API_KEY')}}`
           }
         }
         break
@@ -69,7 +69,7 @@ class AiWarpGenerator extends ServiceGenerator {
         config.aiProvider = {
           openai: {
             model: this.config.aiModel,
-            apiKey: `{${this.getEnvVarName('PLT_AI_API_KEY')}}`
+            apiKey: `{${this.getEnvVarName('PLT_OPENAI_API_KEY')}}`
           }
         }
         break
@@ -77,7 +77,7 @@ class AiWarpGenerator extends ServiceGenerator {
         config.aiProvider = {
           openai: {
             model: this.config.aiModel,
-            apiKey: `{${this.getEnvVarName('PLT_AI_API_KEY')}}`
+            apiKey: `{${this.getEnvVarName('PLT_OPENAI_API_KEY')}}`
           }
         }
     }
