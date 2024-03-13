@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
+    "module": "NodeNext",
     "esModuleInterop": true,
-    "target": "es2020",
+    "moduleResolution": "NodeNext",
+    "target": "ESNext",
     "sourceMap": true,
     "pretty": true,
     "noEmitOnError": true,
