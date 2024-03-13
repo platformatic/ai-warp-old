@@ -30,16 +30,16 @@ class AiWarpGenerator extends ServiceGenerator {
         var: 'PLT_AI_PROVIDER',
         label: 'What AI provider would you like to use? (e.g. openai, mistral)',
         default: 'openai',
-        type: 'string'
-        // configValue: 'aiProvider'
+        type: 'string',
+        configValue: 'aiProvider'
       },
       {
         // TODO: is it possible to show a list of all of the models supported here?
         var: 'PLT_AI_MODEL',
         label: 'What AI model would you like to use?',
         default: 'gpt-3.5-turbo',
-        type: 'string'
-        // configValue: 'aiModel'
+        type: 'string',
+        configValue: 'aiModel'
       }
     ]
   }
@@ -89,7 +89,8 @@ class AiWarpGenerator extends ServiceGenerator {
     super._beforePrepare()
 
     this.addEnvVars({
-      PLT_AI_API_KEY: this.config.aiProvider.openAi ?? 'sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+      PLT_OPENAI_API_KEY: this.config.openAiApiKey ?? 'sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+      PLT_MISTRAL_API_KEY: this.config.mistralApiKey ?? 'sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
     }, { overwrite: false })
 
     const packageJson = await this.getStackablePackageJson()
