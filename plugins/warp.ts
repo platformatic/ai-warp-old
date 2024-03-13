@@ -8,8 +8,7 @@ import createError from '@fastify/error'
 
 const UnknownAiProviderError = createError('UNKNOWN_AI_PROVIDER', 'Unknown AI Provider')
 
-function build (config: AiWarpConfig): AiProvider {
-  const { aiProvider } = config
+function build (aiProvider: AiWarpConfig['aiProvider']): AiProvider {
   if ('openai' in aiProvider) {
     const { model, apiKey } = aiProvider.openai
     return new OpenAiProvider(model, apiKey)
@@ -23,7 +22,7 @@ function build (config: AiWarpConfig): AiProvider {
 
 export default async function (fastify: FastifyInstance): Promise<void> {
   const { config } = fastify.platformatic
-  const provider = build(config)
+  const provider = build(config.aiProvider)
 
   fastify.ai = {
     warp: async (prompt) => {
@@ -35,7 +34,7 @@ export default async function (fastify: FastifyInstance): Promise<void> {
 
       let response = await provider.ask(decoratedPrompt)
       if (fastify.ai.preResponseCallback !== undefined) {
-        response = await fastify.ai.preResponseCallback(response);
+        response = await fastify.ai.preResponseCallback(response)
       }
 
       return response
