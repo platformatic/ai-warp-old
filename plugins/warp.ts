@@ -1,5 +1,5 @@
 /// <reference path="../index.d.ts" />
-import { FastifyInstance } from 'fastify'
+import fastifyPlugin from 'fastify-plugin'
 import { OpenAiProvider } from '../ai-providers/open-ai'
 import { MistralProvider } from '../ai-providers/mistral.js'
 import { AiProvider } from '../ai-providers/provider'
@@ -20,11 +20,11 @@ function build (aiProvider: AiWarpConfig['aiProvider']): AiProvider {
   }
 }
 
-export default async function (fastify: FastifyInstance): Promise<void> {
+export default fastifyPlugin(async (fastify) => {
   const { config } = fastify.platformatic
   const provider = build(config.aiProvider)
 
-  fastify.ai = {
+  fastify.decorate('ai', {
     warp: async (prompt) => {
       let decoratedPrompt = prompt
       if (config.promptDecorators !== undefined) {
@@ -40,5 +40,5 @@ export default async function (fastify: FastifyInstance): Promise<void> {
       return response
     },
     rateLimiting: {}
-  }
-}
+  })
+})

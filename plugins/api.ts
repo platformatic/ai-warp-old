@@ -9,7 +9,7 @@ function isAFastifyError (object: object): object is FastifyError {
 
 const InternalServerError = createError('INTERNAL_SERVER_ERROR', 'Internal Server Error', 500)
 
-const plugin: FastifyPluginAsyncTypebox = async (fastify, opts) => {
+const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
   fastify.route({
     url: '/api/v1/prompt',
     method: 'POST',
