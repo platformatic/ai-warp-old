@@ -5,8 +5,8 @@ declare module 'fastify' {
   interface FastifyInstance {
     platformatic: PlatformaticApp<AiWarpConfig>
     ai: {
-      warp: (prompt: string) => Promise<string>,
-      preResponseCallback?: ((response: string) => string) | ((response: string) => Promise<string>),
+      warp: (prompt: string) => Promise<string>
+      preResponseCallback?: ((response: string) => string) | ((response: string) => Promise<string>)
       rateLimiting: {
         max?: ((req: FastifyRequest, key: string) => number) | ((req: FastifyRequest, key: string) => Promise<number>)
         allowList?: (req: FastifyRequest, key: string) => boolean | Promise<boolean>
@@ -19,7 +19,7 @@ declare module 'fastify' {
         onExceeding?: (req: FastifyRequest, key: string) => void
         onExceeded?: (req: FastifyRequest, key: string) => void
       }
-    },
+    }
   }
 }
 
