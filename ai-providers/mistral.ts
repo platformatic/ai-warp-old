@@ -12,8 +12,8 @@ export class MistralProvider implements AiProvider {
 
   async ask (prompt: string): Promise<string> {
     if (this.client === undefined) {
-      const MistralClient = await import('@mistralai/mistralai')
-      this.client = new MistralClient.default(this.apiKey)
+      const { default: MistralClient } = await import('@mistralai/mistralai')
+      this.client = new MistralClient(this.apiKey)
     }
 
     const response = await this.client.chat({
