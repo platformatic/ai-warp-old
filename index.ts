@@ -6,6 +6,7 @@ import { Generator } from './lib/generator'
 import { AiWarpConfig } from './config'
 import warpPlugin from './plugins/warp'
 import apiPlugin from './plugins/api'
+import createError from '@fastify/error';
 
 const stackable: Stackable<AiWarpConfig> = async function (fastify, opts) {
   await fastify.register(platformaticService, opts)
@@ -16,16 +17,56 @@ const stackable: Stackable<AiWarpConfig> = async function (fastify, opts) {
   await fastify.register(warpPlugin, opts) // needs to be registered here for fastify.ai to be decorated
   
   const { rateLimiting } = fastify.ai
+  const { rateLimiting: rateLimitingConfig } = config
   await fastify.register(fastifyRateLimit, {
-    // TODO: how do we let the dev define these callbacks in between decorating fastify.ai and here?
-    max: rateLimiting.max,
-    allowList: rateLimiting.allowList,
-    onBanReach: rateLimiting.onBanReach,
-    keyGenerator: rateLimiting.keyGenerator,
-    errorResponseBuilder: rateLimiting.errorResponseBuilder,
-    onExceeding: rateLimiting.onExceeding,
-    onExceeded: rateLimiting.onExceeded,
-    ...config.rateLimiting
+    max: async (req, key) => {
+      if (rateLimiting.max !== undefined) {
+        return rateLimiting.max(req, key)
+      } else {
+        return rateLimitingConfig?.max || 1000
+      }
+    },
+    allowList: async (req, key) => {
+      if (rateLimiting.allowList !== undefined) {
+        return rateLimiting.allowList(req, key)
+      } else if (rateLimitingConfig?.allowList !== undefined) {
+        return rateLimitingConfig.allowList.indexOf(key) !== -1
+      }
+      return false
+    },
+    onBanReach: async (req, key) => {
+      if (rateLimiting.onBanReach !== undefined) {
+        rateLimiting.onBanReach(req, key)
+      }
+    },
+    keyGenerator: (req) => {
+      if (rateLimiting.keyGenerator !== undefined) {
+        return rateLimiting.keyGenerator(req)
+      } else {
+        return req.ip
+      }
+    },
+    errorResponseBuilder: (req, context) => {
+      if (rateLimiting.errorResponseBuilder !== undefined) {
+        return rateLimiting.errorResponseBuilder(req, context)
+      } else {
+        const RateLimitError = createError<string>('RATE_LIMITED', 'Rate limit exceeded, retry in %s')
+        const err = new RateLimitError(context.after)
+        err.statusCode = 429 // TODO: use context.statusCode https://github.com/fastify/fastify-rate-limit/pull/366
+        return err
+      }
+    },
+    onExceeding: (req, key) => {
+      if (rateLimiting.onExceeded !== undefined) {
+        rateLimiting.onExceeded(req, key)
+      }
+    },
+    onExceeded: (req, key) => {
+      if (rateLimiting.onExceeding !== undefined) {
+        rateLimiting.onExceeding(req, key)
+      }
+    },
+    ...rateLimitingConfig
   })
   await fastify.register(apiPlugin, opts)
 }
