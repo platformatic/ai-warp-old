@@ -1,21 +1,22 @@
 import { platformaticService, Stackable } from '@platformatic/service'
 import fastifyUser from 'fastify-user'
 import fastifyRateLimit from '@fastify/rate-limit'
+import fastifyPlugin from 'fastify-plugin'
 import { schema } from './lib/schema'
 import { Generator } from './lib/generator'
 import { AiWarpConfig } from './config'
 import warpPlugin from './plugins/warp'
 import apiPlugin from './plugins/api'
-import createError from '@fastify/error';
+import createError from '@fastify/error'
 
 const stackable: Stackable<AiWarpConfig> = async function (fastify, opts) {
   await fastify.register(platformaticService, opts)
-  
+
   const { config } = fastify.platformatic
   await fastify.register(fastifyUser, config.auth)
 
   await fastify.register(warpPlugin, opts) // needs to be registered here for fastify.ai to be decorated
-  
+
   const { rateLimiting } = fastify.ai
   const { rateLimiting: rateLimitingConfig } = config
   await fastify.register(fastifyRateLimit, {
@@ -23,23 +24,23 @@ const stackable: Stackable<AiWarpConfig> = async function (fastify, opts) {
       if (rateLimiting.max !== undefined) {
         return rateLimiting.max(req, key)
       } else {
-        return rateLimitingConfig?.max || 1000
+        return rateLimitingConfig?.max ?? 1000
       }
     },
     allowList: async (req, key) => {
       if (rateLimiting.allowList !== undefined) {
         return rateLimiting.allowList(req, key)
       } else if (rateLimitingConfig?.allowList !== undefined) {
-        return rateLimitingConfig.allowList.indexOf(key) !== -1
+        return rateLimitingConfig.allowList.includes(key)
       }
       return false
     },
-    onBanReach: async (req, key) => {
+    onBanReach: (req, key) => {
       if (rateLimiting.onBanReach !== undefined) {
         rateLimiting.onBanReach(req, key)
       }
     },
-    keyGenerator: (req) => {
+    keyGenerator: async (req) => {
       if (rateLimiting.keyGenerator !== undefined) {
         return rateLimiting.keyGenerator(req)
       } else {
@@ -91,5 +92,5 @@ stackable.configManagerConfig = {
 // @ts-expect-error
 stackable[Symbol.for('skip-override')] = true
 
-export default stackable
+export default fastifyPlugin(stackable)
 export { Generator, schema }
