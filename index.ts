@@ -10,8 +10,6 @@ import apiPlugin from './plugins/api'
 import createError from '@fastify/error'
 
 const stackable: Stackable<AiWarpConfig> = async function (fastify, opts) {
-  await fastify.register(platformaticService, opts)
-
   const { config } = fastify.platformatic
   await fastify.register(fastifyUser, config.auth)
 
@@ -70,6 +68,8 @@ const stackable: Stackable<AiWarpConfig> = async function (fastify, opts) {
     ...rateLimitingConfig
   })
   await fastify.register(apiPlugin, opts)
+
+  await fastify.register(platformaticService, opts)
 }
 
 stackable.configType = 'ai-warp-app'
