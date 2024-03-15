@@ -26,7 +26,7 @@ export default fastifyPlugin(async (fastify) => {
   const provider = build(config.aiProvider)
 
   fastify.decorate('ai', {
-    warp: async (prompt) => {
+    warp: async (request, prompt) => {
       let decoratedPrompt = prompt
       if (config.promptDecorators !== undefined) {
         const { prefix, suffix } = config.promptDecorators
@@ -35,7 +35,7 @@ export default fastifyPlugin(async (fastify) => {
 
       let response = await provider.ask(decoratedPrompt)
       if (fastify.ai.preResponseCallback !== undefined) {
-        response = await fastify.ai.preResponseCallback(response)
+        response = await fastify.ai.preResponseCallback(request, response)
       }
 
       return response

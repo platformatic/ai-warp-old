@@ -32,7 +32,7 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
       let response: string
       try {
         const { prompt } = request.body
-        response = await fastify.ai.warp(prompt)
+        response = await fastify.ai.warp(request, prompt)
       } catch (exception) {
         if (exception instanceof Object && isAFastifyError(exception)) {
           return exception
