@@ -1,3 +1,4 @@
+// eslint-disable-next-line
 /// <reference path="../index.d.ts" />
 import fastifyPlugin from 'fastify-plugin'
 import { OpenAiProvider } from '../ai-providers/open-ai'

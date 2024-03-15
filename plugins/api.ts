@@ -1,3 +1,4 @@
+// eslint-disable-next-line
 /// <reference path="../index.d.ts" />
 import { FastifyError } from 'fastify'
 import { FastifyPluginAsyncTypebox, Type } from '@fastify/type-provider-typebox'

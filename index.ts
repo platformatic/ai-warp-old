@@ -20,14 +20,14 @@ const stackable: Stackable<AiWarpConfig> = async function (fastify, opts) {
   await fastify.register(fastifyRateLimit, {
     max: async (req, key) => {
       if (rateLimiting.max !== undefined) {
-        return rateLimiting.max(req, key)
+        return await rateLimiting.max(req, key)
       } else {
         return rateLimitingConfig?.max ?? 1000
       }
     },
     allowList: async (req, key) => {
       if (rateLimiting.allowList !== undefined) {
-        return rateLimiting.allowList(req, key)
+        return await rateLimiting.allowList(req, key)
       } else if (rateLimitingConfig?.allowList !== undefined) {
         return rateLimitingConfig.allowList.includes(key)
       }
@@ -40,7 +40,7 @@ const stackable: Stackable<AiWarpConfig> = async function (fastify, opts) {
     },
     keyGenerator: async (req) => {
       if (rateLimiting.keyGenerator !== undefined) {
-        return rateLimiting.keyGenerator(req)
+        return await rateLimiting.keyGenerator(req)
       } else {
         return req.ip
       }
