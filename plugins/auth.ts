@@ -1,3 +1,4 @@
+// eslint-disable-next-line
 /// <reference path="../index.d.ts" />
 import { FastifyInstance } from 'fastify'
 import createError from '@fastify/error'
