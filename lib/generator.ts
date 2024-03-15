@@ -4,6 +4,7 @@ import { Generator as ServiceGenerator } from '@platformatic/service'
 import { BaseGenerator } from '@platformatic/generators'
 import { schema } from './schema'
 import { generateGlobalTypesFile } from './templates/types'
+import { generatePluginWithTypesSupport } from '@platformatic/generators/lib/create-plugin'
 
 interface PackageJson {
   name: string
@@ -82,6 +83,16 @@ class AiWarpGenerator extends ServiceGenerator {
         }
     }
 
+    if (this.config.plugins) {
+      Object.assign(config, {
+        plugins: {
+          paths: [
+            { path: './plugins', encapsulate: false }
+          ]
+        }
+      })
+    }
+
     return Object.assign({}, baseConfig, config)
   }
 
@@ -113,6 +124,9 @@ class AiWarpGenerator extends ServiceGenerator {
       file: 'stackable.schema.json',
       contents: JSON.stringify(schema, null, 2)
     })
+
+    // TODO: typescript & make this optional
+    this.addFile(generatePluginWithTypesSupport(false))
   }
 
   async getStackablePackageJson (): Promise<PackageJson> {
