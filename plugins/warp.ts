@@ -3,7 +3,7 @@
 import fastifyPlugin from 'fastify-plugin'
 import { OpenAiProvider } from '../ai-providers/open-ai'
 import { MistralProvider } from '../ai-providers/mistral.js'
-import { AiProvider } from '../ai-providers/provider'
+import { AiProvider, StreamChunkCallback } from '../ai-providers/provider'
 import { AiWarpConfig } from '../config'
 import createError from '@fastify/error'
 
@@ -38,6 +38,26 @@ export default fastifyPlugin(async (fastify) => {
         response = await fastify.ai.preResponseCallback(request, response)
       }
 
+      return response
+    },
+    warpStream: async (request, prompt) => {
+      let decoratedPrompt = prompt
+      if (config.promptDecorators !== undefined) {
+        const { prefix, suffix } = config.promptDecorators
+        decoratedPrompt = (prefix ?? '') + decoratedPrompt + (suffix ?? '')
+      }
+
+      let chunkCallback: StreamChunkCallback | undefined
+      if (fastify.ai.preResponseChunkCallback !== undefined) {
+        chunkCallback = async (response) => {
+          if (fastify.ai.preResponseChunkCallback === undefined) {
+            return response
+          }
+          return await fastify.ai.preResponseChunkCallback(request, response)
+        }
+      }
+
+      const response = await provider.askStream(decoratedPrompt, chunkCallback)
       return response
     },
     rateLimiting: {}

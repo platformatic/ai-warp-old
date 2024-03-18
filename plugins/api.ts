@@ -29,19 +29,50 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
       }
     },
     handler: async (request) => {
-      let response: string
       try {
         const { prompt } = request.body
-        response = await fastify.ai.warp(request, prompt)
+        const response = await fastify.ai.warp(request, prompt)
+
+        return { response }
       } catch (exception) {
         if (exception instanceof Object && isAFastifyError(exception)) {
           return exception
         } else {
-          return new InternalServerError()
+          const err = new InternalServerError()
+          err.cause = exception
+          throw err
         }
       }
+    }
+  })
 
-      return { response }
+  fastify.route({
+    url: '/api/v1/stream',
+    method: 'POST',
+    schema: {
+      produces: ['text/event-stream; charset=utf-16'],
+      body: Type.Object({
+        prompt: Type.String()
+      })
+    },
+    handler: async (request, reply) => {
+      try {
+        const { prompt } = request.body
+
+        const response = await fastify.ai.warpStream(request, prompt)
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
+        reply.header('content-type', 'text/event-stream')
+
+        return response
+      } catch (exception) {
+        if (exception instanceof Object && isAFastifyError(exception)) {
+          return exception
+        } else {
+          const err = new InternalServerError()
+          err.cause = exception
+          throw err
+        }
+      }
     }
   })
 }

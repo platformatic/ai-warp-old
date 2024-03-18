@@ -1,3 +1,4 @@
+import { ReadableStream } from 'node:stream/web'
 import { PlatformaticApp } from '@platformatic/service'
 import { AiWarpConfig } from './config'
 
@@ -6,7 +7,9 @@ declare module 'fastify' {
     platformatic: PlatformaticApp<AiWarpConfig>
     ai: {
       warp: (request: FastifyRequest, prompt: string) => Promise<string>
+      warpStream: (request: FastifyRequest, prompt: string) => Promise<ReadableStream>
       preResponseCallback?: ((request: FastifyRequest, response: string) => string) | ((request: FastifyRequest, response: string) => Promise<string>)
+      preResponseChunkCallback?: ((request: FastifyRequest, response: string) => string) | ((request: FastifyRequest, response: string) => Promise<string>)
       rateLimiting: {
         max?: ((req: FastifyRequest, key: string) => number) | ((req: FastifyRequest, key: string) => Promise<number>)
         allowList?: (req: FastifyRequest, key: string) => boolean | Promise<boolean>
