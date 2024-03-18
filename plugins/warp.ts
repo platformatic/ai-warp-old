@@ -1,5 +1,6 @@
 // eslint-disable-next-line
 /// <reference path="../index.d.ts" />
+import { ReadableStream } from 'node:stream/web'
 import fastifyPlugin from 'fastify-plugin'
 import { OpenAiProvider } from '../ai-providers/open-ai'
 import { MistralProvider } from '../ai-providers/mistral.js'
@@ -26,15 +27,20 @@ export default fastifyPlugin(async (fastify) => {
   const provider = build(config.aiProvider)
 
   fastify.decorate('ai', {
-    warp: async (request, prompt) => {
+    warp: async (request, prompt, stream) => {
       let decoratedPrompt = prompt
       if (config.promptDecorators !== undefined) {
         const { prefix, suffix } = config.promptDecorators
         decoratedPrompt = (prefix ?? '') + decoratedPrompt + (suffix ?? '')
       }
 
-      let response = await provider.ask(decoratedPrompt)
-      if (fastify.ai.preResponseCallback !== undefined) {
+      let response = await provider.ask(decoratedPrompt, stream ?? false)
+      if (response instanceof ReadableStream) {
+        // Checking in this scope to make typescript happy
+        if (fastify.ai.preResponseChunkCallback !== undefined) {
+          await fastify.ai.preResponseChunkCallback(request, response)
+        }
+      } else if (fastify.ai.preResponseCallback !== undefined) {
         response = await fastify.ai.preResponseCallback(request, response)
       }
 

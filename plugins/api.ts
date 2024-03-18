@@ -1,5 +1,6 @@
 // eslint-disable-next-line
 /// <reference path="../index.d.ts" />
+import { ReadableStream } from 'node:stream/web'
 import { FastifyError } from 'fastify'
 import { FastifyPluginAsyncTypebox, Type } from '@fastify/type-provider-typebox'
 import createError from '@fastify/error'
@@ -29,10 +30,15 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
       }
     },
     handler: async (request) => {
-      let response: string
       try {
         const { prompt } = request.body
-        response = await fastify.ai.warp(request, prompt)
+
+        const response = await fastify.ai.warp(request, prompt, false)
+        if (response instanceof ReadableStream) {
+          throw new InternalServerError()
+        }
+
+        return { response }
       } catch (exception) {
         if (exception instanceof Object && isAFastifyError(exception)) {
           return exception
@@ -40,8 +46,37 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
           return new InternalServerError()
         }
       }
+    }
+  })
 
-      return { response }
+  fastify.route({
+    url: '/api/v1/stream',
+    method: 'POST',
+    schema: {
+      produces: ['text/event-stream'],
+      body: Type.Object({
+        prompt: Type.String()
+      }),
+    },
+    handler: async (request, reply) => {
+      try {
+        const { prompt } = request.body
+
+        const response = await fastify.ai.warp(request, prompt, true)
+        // if (!(response instanceof ReadableStream)) {
+        //   throw new InternalServerError()
+        // }
+        // ts-ignore-error
+        console.log('name: =----------------------- ' + response.constructor?.name)
+        reply.header('content-type', 'text/event-stream; charset=utf-16')
+        return response
+      } catch (exception) {
+        if (exception instanceof Object && isAFastifyError(exception)) {
+          return exception
+        } else {
+          return new InternalServerError()
+        }
+      }
     }
   })
 }
