@@ -43,6 +43,7 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
         if (exception instanceof Object && isAFastifyError(exception)) {
           return exception
         } else {
+          fastify.log.error(exception)
           return new InternalServerError()
         }
       }
@@ -56,24 +57,33 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
       produces: ['text/event-stream'],
       body: Type.Object({
         prompt: Type.String()
-      }),
+      })
     },
     handler: async (request, reply) => {
       try {
         const { prompt } = request.body
 
-        const response = await fastify.ai.warp(request, prompt, true)
-        // if (!(response instanceof ReadableStream)) {
-        //   throw new InternalServerError()
-        // }
-        // ts-ignore-error
-        console.log('name: =----------------------- ' + response.constructor?.name)
+        const response = await fastify.ai.warp(
+          request,
+          prompt,
+          true,
+          (error) => {
+            fastify.log.error(error)
+            // Eslint thinks status and send are async?
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            reply.status(500)
+            // eslint-disable-next-line @typescript-eslint/no-floating-promises
+            reply.send(new InternalServerError())
+          }
+        )
+        // eslint-disable-next-line @typescript-eslint/no-floating-promises
         reply.header('content-type', 'text/event-stream; charset=utf-16')
         return response
       } catch (exception) {
         if (exception instanceof Object && isAFastifyError(exception)) {
           return exception
         } else {
+          fastify.log.error(exception)
           return new InternalServerError()
         }
       }

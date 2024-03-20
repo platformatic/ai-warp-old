@@ -27,14 +27,14 @@ export default fastifyPlugin(async (fastify) => {
   const provider = build(config.aiProvider)
 
   fastify.decorate('ai', {
-    warp: async (request, prompt, stream) => {
+    warp: async (request, prompt, stream, streamErrorCallback) => {
       let decoratedPrompt = prompt
       if (config.promptDecorators !== undefined) {
         const { prefix, suffix } = config.promptDecorators
         decoratedPrompt = (prefix ?? '') + decoratedPrompt + (suffix ?? '')
       }
 
-      let response = await provider.ask(decoratedPrompt, stream ?? false)
+      let response = await provider.ask(decoratedPrompt, stream ?? false, streamErrorCallback)
       if (response instanceof ReadableStream) {
         // Checking in this scope to make typescript happy
         if (fastify.ai.preResponseChunkCallback !== undefined) {

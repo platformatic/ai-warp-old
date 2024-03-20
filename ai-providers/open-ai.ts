@@ -1,20 +1,24 @@
 import { ReadableStream, UnderlyingByteSource, ReadableByteStreamController } from 'node:stream/web'
 import OpenAI from 'openai'
-import { AiProvider, NoContentError } from './provider'
+import { AiProvider, NoContentError, StreamErrorCallback } from './provider'
 import { Stream } from 'openai/streaming'
-import { ReadableStream as ReadableStreamPolyfill } from 'web-streams-polyfill';
+import { ReadableStream as ReadableStreamPolyfill } from 'web-streams-polyfill'
+import { ChatCompletionChunk } from 'openai/resources/index.mjs'
 
 class OpenAiByteSource implements UnderlyingByteSource {
   type: 'bytes' = 'bytes'
-  polyfillStream: ReadableStreamPolyfill
+  polyfillStream: ReadableStreamPolyfill<ChatCompletionChunk>
+  errorCallback?: StreamErrorCallback
 
-  constructor(polyfillStream: ReadableStreamPolyfill) {
+  constructor (polyfillStream: ReadableStreamPolyfill, errorCallback?: StreamErrorCallback) {
     this.polyfillStream = polyfillStream
+    this.errorCallback = errorCallback
   }
 
   start (controller: ReadableByteStreamController): void {
     const reader = this.polyfillStream.getReader()
-    function push(): void {
+    const errorCallback = this.errorCallback
+    function push (): void {
       reader.read().then(({ done, value }) => {
         if (done !== undefined && done) {
           controller.close()
@@ -22,14 +26,30 @@ class OpenAiByteSource implements UnderlyingByteSource {
         }
 
         if (!(value instanceof Uint8Array)) {
-          throw new Error('value not a uint8array')
+          const error = new Error('value not a Uint8Array')
+          if (errorCallback !== undefined) {
+            errorCallback(error)
+            return
+          } else {
+            throw error
+          }
         }
 
         const jsonString = Buffer.from(value).toString('utf8')
-        const json = JSON.parse(jsonString)
+        const chunk: ChatCompletionChunk = JSON.parse(jsonString)
 
-        const content = json.choices[0].delta.content
-        if (content !== undefined && content.length > 0) {
+        if (chunk.choices.length === 0) {
+          const error = new NoContentError('OpenAI (Stream)')
+          if (errorCallback !== undefined) {
+            errorCallback(error)
+            return
+          } else {
+            throw error
+          }
+        }
+
+        const { content } = chunk.choices[0].delta
+        if (content !== undefined && content !== null && content.length > 0) {
           const buffer = new ArrayBuffer(content.length * 2)
           const view = new Uint16Array(buffer)
           for (let i = 0; i < content.length; i++) {
@@ -40,6 +60,8 @@ class OpenAiByteSource implements UnderlyingByteSource {
         }
 
         push()
+      }).catch(err => {
+        throw err
       })
     }
 
@@ -56,7 +78,7 @@ export class OpenAiProvider implements AiProvider {
     this.client = new OpenAI({ apiKey })
   }
 
-  async ask (prompt: string, stream: boolean): Promise<string | ReadableStream> {
+  async ask (prompt: string, stream: boolean, streamErrorCallback?: StreamErrorCallback): Promise<string | ReadableStream> {
     const response = await this.client.chat.completions.create({
       model: this.model,
       messages: [
@@ -65,7 +87,7 @@ export class OpenAiProvider implements AiProvider {
       stream
     })
     if (response instanceof Stream) {
-      return new ReadableStream(new OpenAiByteSource(response.toReadableStream()))
+      return new ReadableStream(new OpenAiByteSource(response.toReadableStream(), streamErrorCallback))
     }
 
     if (response.choices.length === 0) {

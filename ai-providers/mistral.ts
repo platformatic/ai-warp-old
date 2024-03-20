@@ -1,18 +1,20 @@
 import { ReadableStream, UnderlyingByteSource, ReadableByteStreamController } from 'node:stream/web'
 import { ChatCompletionResponseChunk } from '@mistralai/mistralai'
-import { AiProvider, NoContentError } from './provider'
+import { AiProvider, NoContentError, StreamErrorCallback } from './provider'
 
 type MistralStreamResponse = AsyncGenerator<ChatCompletionResponseChunk, void, unknown>
 
 class MistralByteSource implements UnderlyingByteSource {
   type: 'bytes' = 'bytes'
   response: MistralStreamResponse
+  errorCallback?: StreamErrorCallback
 
-  constructor (response: MistralStreamResponse) {
+  constructor (response: MistralStreamResponse, errorCallback?: StreamErrorCallback) {
     this.response = response
   }
 
   start (controller: ReadableByteStreamController): void {
+    const errorCallback = this.errorCallback
     function push (response: MistralStreamResponse): void {
       response.next().then(({ done, value }) => {
         if (done !== undefined && done) {
@@ -21,23 +23,23 @@ class MistralByteSource implements UnderlyingByteSource {
         }
 
         if (value.choices.length === 0) {
-          throw new NoContentError('Mistral (Stream)')
+          const error = new NoContentError('Mistral (Stream)')
+          if (errorCallback !== undefined) {
+            errorCallback(error)
+            return
+          } else {
+            throw error
+          }
         }
 
-        const choice = value.choices[0]
-        if (choice.delta.content === undefined) {
-          throw new NoContentError('Mistral (Stream)')
-        }
-
-        const content = choice.delta.content
-
-        if (content.length > 0) {
+        const { content } = value.choices[0].delta
+        if (content !== undefined && content.length > 0) {
           const buffer = new ArrayBuffer(content.length * 2)
           const view = new Uint16Array(buffer)
           for (let i = 0; i < content.length; i++) {
             view[i] = content.charCodeAt(i)
           }
-  
+
           controller.enqueue(view)
         }
 
