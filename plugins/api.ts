@@ -1,6 +1,5 @@
 // eslint-disable-next-line
 /// <reference path="../index.d.ts" />
-import { ReadableStream } from 'node:stream/web'
 import { FastifyError } from 'fastify'
 import { FastifyPluginAsyncTypebox, Type } from '@fastify/type-provider-typebox'
 import createError from '@fastify/error'
@@ -32,19 +31,16 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
     handler: async (request) => {
       try {
         const { prompt } = request.body
-
-        const response = await fastify.ai.warp(request, prompt, false)
-        if (response instanceof ReadableStream) {
-          throw new InternalServerError()
-        }
+        const response = await fastify.ai.warp(request, prompt)
 
         return { response }
       } catch (exception) {
         if (exception instanceof Object && isAFastifyError(exception)) {
           return exception
         } else {
-          fastify.log.error(exception)
-          return new InternalServerError()
+          const err = new InternalServerError()
+          err.cause = exception
+          throw err
         }
       }
     }
@@ -54,7 +50,7 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
     url: '/api/v1/stream',
     method: 'POST',
     schema: {
-      produces: ['text/event-stream'],
+      produces: ['text/event-stream; charset=utf-16'],
       body: Type.Object({
         prompt: Type.String()
       })
@@ -63,28 +59,18 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
       try {
         const { prompt } = request.body
 
-        const response = await fastify.ai.warp(
-          request,
-          prompt,
-          true,
-          (error) => {
-            fastify.log.error(error)
-            // Eslint thinks status and send are async?
-            // eslint-disable-next-line @typescript-eslint/no-floating-promises
-            reply.status(500)
-            // eslint-disable-next-line @typescript-eslint/no-floating-promises
-            reply.send(new InternalServerError())
-          }
-        )
+        const response = await fastify.ai.warpStream(request, prompt)
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
-        reply.header('content-type', 'text/event-stream; charset=utf-16')
+        reply.header('content-type', 'text/event-stream')
+
         return response
       } catch (exception) {
         if (exception instanceof Object && isAFastifyError(exception)) {
           return exception
         } else {
-          fastify.log.error(exception)
-          return new InternalServerError()
+          const err = new InternalServerError()
+          err.cause = exception
+          throw err
         }
       }
     }

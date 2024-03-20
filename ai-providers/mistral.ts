@@ -1,55 +1,54 @@
 import { ReadableStream, UnderlyingByteSource, ReadableByteStreamController } from 'node:stream/web'
 import { ChatCompletionResponseChunk } from '@mistralai/mistralai'
-import { AiProvider, NoContentError, StreamErrorCallback } from './provider'
+import { AiProvider, NoContentError, StreamChunkCallback } from './provider'
+import { AiStreamEvent, encodeEvent } from './event'
 
 type MistralStreamResponse = AsyncGenerator<ChatCompletionResponseChunk, void, unknown>
 
 class MistralByteSource implements UnderlyingByteSource {
   type: 'bytes' = 'bytes'
   response: MistralStreamResponse
-  errorCallback?: StreamErrorCallback
+  chunkCallback?: StreamChunkCallback
 
-  constructor (response: MistralStreamResponse, errorCallback?: StreamErrorCallback) {
+  constructor (response: MistralStreamResponse, chunkCallback?: StreamChunkCallback) {
     this.response = response
+    this.chunkCallback = chunkCallback
   }
 
-  start (controller: ReadableByteStreamController): void {
-    const errorCallback = this.errorCallback
-    function push (response: MistralStreamResponse): void {
-      response.next().then(({ done, value }) => {
-        if (done !== undefined && done) {
-          controller.close()
-          return
-        }
-
-        if (value.choices.length === 0) {
-          const error = new NoContentError('Mistral (Stream)')
-          if (errorCallback !== undefined) {
-            errorCallback(error)
-            return
-          } else {
-            throw error
-          }
-        }
-
-        const { content } = value.choices[0].delta
-        if (content !== undefined && content.length > 0) {
-          const buffer = new ArrayBuffer(content.length * 2)
-          const view = new Uint16Array(buffer)
-          for (let i = 0; i < content.length; i++) {
-            view[i] = content.charCodeAt(i)
-          }
-
-          controller.enqueue(view)
-        }
-
-        push(response)
-      }).catch(err => {
-        throw err
-      })
+  async pull (controller: ReadableByteStreamController): Promise<void> {
+    const { done, value } = await this.response.next()
+    if (done !== undefined && done) {
+      controller.close()
+      return
     }
 
-    push(this.response)
+    if (value.choices.length === 0) {
+      const error = new NoContentError('Mistral (Stream)')
+
+      const eventData: AiStreamEvent = {
+        event: 'error',
+        data: error
+      }
+      controller.enqueue(encodeEvent(eventData))
+      controller.close()
+
+      return
+    }
+
+    const { content } = value.choices[0].delta
+
+    let response = content ?? ''
+    if (this.chunkCallback !== undefined) {
+      response = await this.chunkCallback(response)
+    }
+
+    const eventData: AiStreamEvent = {
+      event: 'content',
+      data: {
+        response
+      }
+    }
+    controller.enqueue(encodeEvent(eventData))
   }
 }
 
@@ -63,21 +62,10 @@ export class MistralProvider implements AiProvider {
     this.apiKey = apiKey
   }
 
-  async ask (prompt: string, stream: boolean): Promise<string | ReadableStream> {
+  async ask (prompt: string): Promise<string> {
     if (this.client === undefined) {
       const { default: MistralClient } = await import('@mistralai/mistralai')
       this.client = new MistralClient(this.apiKey)
-    }
-
-    if (stream) {
-      const response = this.client.chatStream({
-        model: this.model,
-        messages: [
-          { role: 'user', content: prompt }
-        ]
-      })
-      // TODO: ReadableStream.from might be better, try when it lands in Node
-      return new ReadableStream(new MistralByteSource(response))
     }
 
     const response = await this.client.chat({
@@ -92,5 +80,20 @@ export class MistralProvider implements AiProvider {
     }
 
     return response.choices[0].message.content
+  }
+
+  async askStream (prompt: string, chunkCallback?: StreamChunkCallback): Promise<ReadableStream> {
+    if (this.client === undefined) {
+      const { default: MistralClient } = await import('@mistralai/mistralai')
+      this.client = new MistralClient(this.apiKey)
+    }
+
+    const response = this.client.chatStream({
+      model: this.model,
+      messages: [
+        { role: 'user', content: prompt }
+      ]
+    })
+    return new ReadableStream(new MistralByteSource(response, chunkCallback))
   }
 }
