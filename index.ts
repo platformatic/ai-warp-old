@@ -6,12 +6,14 @@ import { schema } from './lib/schema'
 import { Generator } from './lib/generator'
 import { AiWarpConfig } from './config'
 import warpPlugin from './plugins/warp'
+import authPlugin from './plugins/auth'
 import apiPlugin from './plugins/api'
 import createError from '@fastify/error'
 
 const stackable: Stackable<AiWarpConfig> = async function (fastify, opts) {
   const { config } = fastify.platformatic
   await fastify.register(fastifyUser, config.auth)
+  await fastify.register(authPlugin, opts)
 
   await fastify.register(warpPlugin, opts) // needs to be registered here for fastify.ai to be decorated
 
