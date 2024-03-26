@@ -83,7 +83,7 @@ class AiWarpGenerator extends ServiceGenerator {
         }
     }
 
-    if (this.config.plugins) {
+    if (this.config.plugin !== undefined && this.config.plugin) {
       Object.assign(config, {
         plugins: {
           paths: [
@@ -125,8 +125,9 @@ class AiWarpGenerator extends ServiceGenerator {
       contents: JSON.stringify(schema, null, 2)
     })
 
-    // TODO: typescript & make this optional
-    this.addFile(generatePluginWithTypesSupport(false))
+    if (this.config.plugin !== undefined && this.config.plugin) {
+      this.addFile(generatePluginWithTypesSupport(this.config.typescript ?? false))
+    }
   }
 
   async getStackablePackageJson (): Promise<PackageJson> {
