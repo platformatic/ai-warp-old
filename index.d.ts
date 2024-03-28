@@ -1,5 +1,6 @@
 import { ReadableStream } from 'node:stream/web'
 import { PlatformaticApp } from '@platformatic/service'
+import { errorResponseBuilderContext } from '@fastify/rate-limit'
 import { AiWarpConfig } from './config'
 
 declare module 'fastify' {

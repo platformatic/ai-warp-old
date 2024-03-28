@@ -50,7 +50,7 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
     url: '/api/v1/stream',
     method: 'POST',
     schema: {
-      produces: ['text/event-stream; charset=utf-16'],
+      produces: ['text/event-stream'],
       body: Type.Object({
         prompt: Type.String()
       })

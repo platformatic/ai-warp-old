@@ -12,7 +12,9 @@ export default fastifyPlugin(async (fastify: FastifyInstance) => {
   fastify.addHook('preHandler', async (request) => {
     await request.extractUser()
 
-    if (config.auth?.required !== undefined && config.auth?.required && request.user === undefined) {
+    const isAuthRequired = config.auth?.required !== undefined && config.auth?.required
+    const isMissingUser = request.user === undefined || request.user === null
+    if (isAuthRequired && isMissingUser) {
       throw new UnauthorizedError()
     }
   })

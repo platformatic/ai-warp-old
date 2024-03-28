@@ -18,7 +18,11 @@ class AiWarpGenerator extends ServiceGenerator {
     const defaultBaseConfig = super.getDefaultConfig()
     const defaultConfig = {
       aiProvider: 'openai',
-      aiModel: 'gpt-3.5-turbo'
+      aiModel: 'gpt-3.5-turbo',
+      // TODO: temporary fix, when running the typescript files directly
+      //  (in tests) this goes a directory above the actual project. Exposing
+      //  temporarily until I come up with something better
+      aiWarpPackageJsonPath: join(__dirname, '..', '..', 'package.json')
     }
     return Object.assign({}, defaultBaseConfig, defaultConfig)
   }
@@ -132,7 +136,7 @@ class AiWarpGenerator extends ServiceGenerator {
 
   async getStackablePackageJson (): Promise<PackageJson> {
     if (this._packageJson == null) {
-      const packageJsonPath = join(__dirname, '..', '..', 'package.json')
+      const packageJsonPath = this.config.aiWarpPackageJsonPath
       const packageJsonFile = await readFile(packageJsonPath, 'utf8')
       const packageJson: Partial<PackageJson> = JSON.parse(packageJsonFile)
 
