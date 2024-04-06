@@ -2,6 +2,7 @@ import { ReadableStream, UnderlyingByteSource, ReadableByteStreamController } fr
 import OpenAI from 'openai'
 import { AiProvider, NoContentError, StreamChunkCallback } from './provider'
 import { ReadableStream as ReadableStreamPolyfill } from 'web-streams-polyfill'
+import { fetch } from 'undici'
 import { ChatCompletionChunk } from 'openai/resources/index.mjs'
 import { AiStreamEvent, encodeEvent } from './event'
 import createError from '@fastify/error'
@@ -86,7 +87,8 @@ export class OpenAiProvider implements AiProvider {
 
   constructor (model: string, apiKey: string) {
     this.model = model
-    this.client = new OpenAI({ apiKey })
+    // @ts-expect-error
+    this.client = new OpenAI({ apiKey, fetch })
   }
 
   async ask (prompt: string): Promise<string> {
@@ -118,6 +120,6 @@ export class OpenAiProvider implements AiProvider {
       ],
       stream: true
     })
-    return new ReadableStream(new OpenAiByteSource(response.toReadableStream()))
+    return new ReadableStream(new OpenAiByteSource(response.toReadableStream(), chunkCallback))
   }
 }

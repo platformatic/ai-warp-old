@@ -11,7 +11,11 @@
     "build:config": "node ./dist/lib/schema.js | json2ts > config.d.ts",
     "clean": "rm -fr ./dist",
     "lint": "ts-standard | snazzy",
-    "lint:fix": "ts-standard --fix | snazzy"
+    "lint:fix": "ts-standard --fix | snazzy",
+    "test": "npm run test:unit && npm run test:e2e && npm run test:types",
+    "test:unit": "node --test --test-reporter=@reporters/github --test-reporter-destination=stdout --test-reporter=spec --test-reporter-destination=stdout --import=tsx ./tests/unit/index.ts",
+    "test:e2e": "node --test --test-reporter=@reporters/github --test-reporter-destination=stdout --test-reporter=spec --test-reporter-destination=stdout --import=tsx ./tests/e2e/index.ts",
+    "test:types": "tsd"
   },
   "engines": {
     "node": "^18.8.0 || >=20.6.0"
@@ -28,14 +32,20 @@
     "@platformatic/config": "^1.24.0",
     "@platformatic/generators": "^1.24.0",
     "@platformatic/service": "^1.24.0",
+    "@reporters/github": "^1.7.0",
     "fast-json-stringify": "^5.13.0",
     "fastify-user": "^0.3.3",
     "json-schema-to-typescript": "^13.0.0",
     "openai": "^4.28.4",
     "snazzy": "^9.0.0",
-    "ts-standard": "^12.0.2"
+    "ts-standard": "^12.0.2",
+    "tsd": "^0.30.7",
+    "tsx": "^4.7.1"
   },
   "overrides": {
     "minimatch": "^5.0.0"
+  },
+  "tsd": {
+    "directory": "tests/types"
   }
 }
