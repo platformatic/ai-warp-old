@@ -93,14 +93,14 @@ describe('AiWarpGenerator', () => {
 
     generator.setConfig({
       aiProvider: 'mistral',
-      aiModel: 'mistral-tiny'
+      aiModel: 'open-mistral-7b'
     })
     await generator.run()
 
     configFile = JSON.parse(await readFile(join(dir, 'platformatic.json'), 'utf8'))
     assert.deepStrictEqual(configFile.aiProvider, {
       mistral: {
-        model: 'mistral-tiny',
+        model: 'open-mistral-7b',
         apiKey: '{PLT_MISTRAL_API_KEY}'
       }
     })

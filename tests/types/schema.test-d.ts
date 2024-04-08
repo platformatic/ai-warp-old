@@ -1,7 +1,6 @@
 import { expectAssignable } from 'tsd'
 import { AiWarpConfig } from '../../config'
 
-// TODO: add more when more models are added
 expectAssignable<AiWarpConfig['aiProvider']>({
   openai: {
     model: 'gpt-3.5-turbo',
@@ -18,7 +17,7 @@ expectAssignable<AiWarpConfig['aiProvider']>({
 
 expectAssignable<AiWarpConfig['aiProvider']>({
   mistral: {
-    model: 'mistral-tiny',
+    model: 'open-mistral-7b',
     apiKey: ''
   }
 })
@@ -35,7 +34,7 @@ expectAssignable<AiWarpConfig>({
 expectAssignable<AiWarpConfig>({
   aiProvider: {
     mistral: {
-      model: 'mistral-tiny',
+      model: 'open-mistral-7b',
       apiKey: ''
     }
   }

@@ -10,7 +10,7 @@ const expectedStreamBody = buildExpectedStreamBodyString()
 
 const providers: AiProvider[] = [
   new OpenAiProvider('gpt-3.5-turbo', ''),
-  new MistralProvider('mistral-tiny', '')
+  new MistralProvider('open-mistral-7b', '')
 ]
 
 for (const provider of providers) {
