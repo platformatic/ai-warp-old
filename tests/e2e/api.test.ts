@@ -28,7 +28,7 @@ const providers: Provider[] = [
     name: 'Mistral',
     config: {
       mistral: {
-        model: 'mistral-tiny',
+        model: 'open-mistral-7b',
         apiKey: ''
       }
     }
