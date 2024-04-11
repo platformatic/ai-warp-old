@@ -333,6 +333,11 @@ export interface AiWarpConfig {
   };
   rateLimiting?: {
     max?: number;
+    maxByClaims?: {
+      claim: string;
+      claimValue: string;
+      max: number;
+    }[];
     timeWindow?: number | string;
     hook?: "onRequest" | "preParsing" | "preValidation" | "preHandler";
     cache?: number;

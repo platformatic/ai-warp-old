@@ -4,6 +4,7 @@ import assert from 'node:assert'
 import fastifyPlugin from 'fastify-plugin'
 import { AiWarpConfig } from '../../config'
 import { buildAiWarpApp } from '../utils/stackable'
+import { authConfig, createToken } from '../utils/auth'
 
 const aiProvider: AiWarpConfig['aiProvider'] = {
   openai: {
@@ -127,6 +128,47 @@ it('calls ai.rateLimiting.errorResponseBuilder callback', async () => {
 
     await fetch(`http://localhost:${port}`)
     assert.strictEqual(callbackCalled, true)
+  } finally {
+    await app.close()
+  }
+})
+
+it('uses the max for a specific claim', async () => {
+  const [app, port] = await buildAiWarpApp({
+    aiProvider,
+    rateLimiting: {
+      maxByClaims: [
+        {
+          claim: 'rateLimitMax',
+          claimValue: '10',
+          max: 10
+        },
+        {
+          claim: 'rateLimitMax',
+          claimValue: '100',
+          max: 100
+        }
+      ]
+    },
+    auth: authConfig
+  })
+
+  try {
+    await app.start()
+
+    let res = await fetch(`http://localhost:${port}`, {
+      headers: {
+        Authorization: `Bearer ${createToken({ rateLimitMax: '10' })}`
+      }
+    })
+    assert.strictEqual(res.headers.get('x-ratelimit-limit'), '10')
+
+    res = await fetch(`http://localhost:${port}`, {
+      headers: {
+        Authorization: `Bearer ${createToken({ rateLimitMax: '100' })}`
+      }
+    })
+    assert.strictEqual(res.headers.get('x-ratelimit-limit'), '100')
   } finally {
     await app.close()
   }

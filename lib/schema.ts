@@ -208,6 +208,19 @@ const aiWarpSchema = {
       properties: {
         // Pulled from https://github.com/fastify/fastify-rate-limit/blob/master/types/index.d.ts#L81
         max: { type: 'number' },
+        maxByClaims: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              claim: { type: 'string' },
+              claimValue: { type: 'string' },
+              max: { type: 'number' }
+            },
+            additionalProperties: false,
+            required: ['claim', 'claimValue', 'max']
+          }
+        },
         timeWindow: {
           oneOf: [
             { type: 'number' },

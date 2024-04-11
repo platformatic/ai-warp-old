@@ -9,7 +9,7 @@ const UnauthorizedError = createError('UNAUTHORIZED', 'Unauthorized', 401)
 export default fastifyPlugin(async (fastify: FastifyInstance) => {
   const { config } = fastify.platformatic
 
-  fastify.addHook('preHandler', async (request) => {
+  fastify.addHook('onRequest', async (request) => {
     await request.extractUser()
 
     const isAuthRequired = config.auth?.required !== undefined && config.auth?.required
