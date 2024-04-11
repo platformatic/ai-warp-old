@@ -41,6 +41,15 @@ expectAssignable<AiWarpConfig>({
 })
 
 expectAssignable<AiWarpConfig>({
+  aiProvider: {
+    ollama: {
+      host: '',
+      model: 'some-model'
+    }
+  }
+})
+
+expectAssignable<AiWarpConfig>({
   $schema: './stackable.schema.json',
   service: {
     openapi: true

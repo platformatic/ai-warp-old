@@ -256,6 +256,12 @@ export interface AiWarpConfig {
             | "mistral-large-latest";
           apiKey: string;
         };
+      }
+    | {
+        ollama: {
+          host: string;
+          model: string;
+        };
       };
   promptDecorators?: {
     prefix?: string;
