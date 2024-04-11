@@ -12,6 +12,8 @@
     "clean": "rm -fr ./dist",
     "lint": "ts-standard | snazzy",
     "lint:fix": "ts-standard --fix | snazzy",
+    "lint-md": "markdownlint-cli2 .",
+    "lint-md:fix": "markdownlint-cli2 --fix .",
     "test": "npm run test:unit && npm run test:e2e && npm run test:types",
     "test:unit": "node --test --test-reporter=@reporters/github --test-reporter-destination=stdout --test-reporter=spec --test-reporter-destination=stdout --import=tsx ./tests/unit/index.ts",
     "test:e2e": "node --test --test-reporter=@reporters/github --test-reporter-destination=stdout --test-reporter=spec --test-reporter-destination=stdout --import=tsx ./tests/e2e/index.ts",
@@ -23,6 +25,7 @@
   "devDependencies": {
     "@reporters/github": "^1.7.0",
     "fastify": "^4.26.0",
+    "markdownlint-cli2": "^0.13.0",
     "snazzy": "^9.0.0",
     "ts-standard": "^12.0.2",
     "tsd": "^0.31.0",
