@@ -78,6 +78,14 @@ class AiWarpGenerator extends ServiceGenerator {
           }
         }
         break
+      case 'ollama':
+        config.aiProvider = {
+          ollama: {
+            host: 'http://127.0.0.1:11434',
+            model: this.config.aiModel
+          }
+        }
+        break
       default:
         config.aiProvider = {
           openai: {

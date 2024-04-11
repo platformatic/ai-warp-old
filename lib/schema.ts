@@ -68,6 +68,21 @@ const aiWarpSchema = {
           },
           required: ['mistral'],
           additionalProperties: false
+        },
+        {
+          properties: {
+            ollama: {
+              type: 'object',
+              properties: {
+                host: { type: 'string' },
+                model: { type: 'string' }
+              },
+              required: ['host', 'model'],
+              additionalProperties: false
+            }
+          },
+          required: ['ollama'],
+          additionalProperties: false
         }
       ]
     },

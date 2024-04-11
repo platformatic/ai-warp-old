@@ -3,7 +3,7 @@ import { before, after, describe, it } from 'node:test'
 import assert from 'node:assert'
 import { FastifyInstance } from 'fastify'
 import fastifyPlugin from 'fastify-plugin'
-import { MOCK_CONTENT_RESPONSE, buildExpectedStreamBodyString } from '../utils/mocks'
+import { MOCK_CONTENT_RESPONSE, OLLAMA_MOCK_HOST, buildExpectedStreamBodyString } from '../utils/mocks'
 import { AiWarpConfig } from '../../config'
 import { buildAiWarpApp } from '../utils/stackable'
 
@@ -21,6 +21,15 @@ const providers: Provider[] = [
       openai: {
         model: 'gpt-3.5-turbo',
         apiKey: ''
+      }
+    }
+  },
+  {
+    name: 'Ollama',
+    config: {
+      ollama: {
+        host: OLLAMA_MOCK_HOST,
+        model: 'some-model'
       }
     }
   },
