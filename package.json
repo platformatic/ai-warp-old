@@ -21,7 +21,12 @@
     "node": "^18.8.0 || >=20.6.0"
   },
   "devDependencies": {
+    "@reporters/github": "^1.7.0",
     "fastify": "^4.26.0",
+    "snazzy": "^9.0.0",
+    "ts-standard": "^12.0.2",
+    "tsd": "^0.31.0",
+    "tsx": "^4.7.2",
     "typescript": "^5.3.3"
   },
   "dependencies": {
@@ -32,16 +37,11 @@
     "@platformatic/config": "^1.24.0",
     "@platformatic/generators": "^1.24.0",
     "@platformatic/service": "^1.24.0",
-    "@reporters/github": "^1.7.0",
     "fast-json-stringify": "^5.13.0",
     "fastify-user": "^0.3.3",
     "json-schema-to-typescript": "^13.0.0",
     "ollama": "^0.5.0",
-    "openai": "^4.28.4",
-    "snazzy": "^9.0.0",
-    "ts-standard": "^12.0.2",
-    "tsd": "^0.30.7",
-    "tsx": "^4.7.1"
+    "openai": "^4.28.4"
   },
   "overrides": {
     "minimatch": "^5.0.0"
