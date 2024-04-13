@@ -7,6 +7,7 @@ import { AiProvider, StreamChunkCallback } from '../ai-providers/provider'
 import { AiWarpConfig } from '../config'
 import createError from '@fastify/error'
 import { OllamaProvider } from '../ai-providers/ollama'
+import { AzureProvider } from '../ai-providers/azure'
 
 const UnknownAiProviderError = createError('UNKNOWN_AI_PROVIDER', 'Unknown AI Provider')
 
@@ -17,6 +18,8 @@ function build (aiProvider: AiWarpConfig['aiProvider']): AiProvider {
     return new MistralProvider(aiProvider.mistral)
   } else if ('ollama' in aiProvider) {
     return new OllamaProvider(aiProvider.ollama)
+  } else if ('azure' in aiProvider) {
+    return new AzureProvider(aiProvider.azure)
   } else {
     throw new UnknownAiProviderError()
   }

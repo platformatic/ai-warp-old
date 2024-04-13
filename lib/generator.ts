@@ -86,6 +86,15 @@ class AiWarpGenerator extends ServiceGenerator {
           }
         }
         break
+      case 'azure':
+        config.aiProvider = {
+          azure: {
+            endpoint: 'https://myaccount.openai.azure.com/',
+            apiKey: `{${this.getEnvVarName('PLT_AZURE_API_KEY')}}`,
+            deploymentName: this.config.aiModel
+          }
+        }
+        break
       default:
         config.aiProvider = {
           openai: {
