@@ -10,9 +10,9 @@ import { OllamaProvider } from '../../ai-providers/ollama'
 const expectedStreamBody = buildExpectedStreamBodyString()
 
 const providers: AiProvider[] = [
-  new OpenAiProvider('gpt-3.5-turbo', ''),
-  new MistralProvider('open-mistral-7b', ''),
-  new OllamaProvider(OLLAMA_MOCK_HOST, 'some-model')
+  new OpenAiProvider({ model: 'gpt-3.5-turbo', apiKey: '' }),
+  new MistralProvider({ model: 'open-mistral-7b', apiKey: '' }),
+  new OllamaProvider({ host: OLLAMA_MOCK_HOST, model: 'some-model' })
 ]
 
 for (const provider of providers) {

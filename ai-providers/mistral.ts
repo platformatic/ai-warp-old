@@ -52,12 +52,17 @@ class MistralByteSource implements UnderlyingByteSource {
   }
 }
 
+interface MistralProviderCtorOptions {
+  model: string
+  apiKey: string
+}
+
 export class MistralProvider implements AiProvider {
   model: string
   apiKey: string
   client?: import('@mistralai/mistralai').default = undefined
 
-  constructor (model: string, apiKey: string) {
+  constructor ({ model, apiKey }: MistralProviderCtorOptions) {
     this.model = model
     this.apiKey = apiKey
   }
