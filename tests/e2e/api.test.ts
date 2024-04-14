@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
-import { before, after, describe, it } from 'node:test'
+import { before, after, afterEach, describe, it } from 'node:test'
 import assert from 'node:assert'
 import { FastifyInstance } from 'fastify'
 import fastifyPlugin from 'fastify-plugin'
+import { fetch } from 'undici'
 import { MOCK_CONTENT_RESPONSE, OLLAMA_MOCK_HOST, buildExpectedStreamBodyString } from '../utils/mocks'
 import { AiWarpConfig } from '../../config'
 import { buildAiWarpApp } from '../utils/stackable'
@@ -46,7 +47,7 @@ const providers: Provider[] = [
 
 // Test the prompt and stream endpoint for each provider
 for (const { name, config } of providers) {
-  describe(name, () => {
+  describe(name, async () => {
     let app: FastifyInstance
     let port: number
     let chunkCallbackCalled = false
@@ -63,11 +64,22 @@ for (const { name, config } of providers) {
       await app.start()
     })
 
+    if (name === 'Mistral') {
+      // The Mistral client overrides the global fetch implementation to use
+      //  node-fetch instead of Undici.
+      // Can remove when https://github.com/mistralai/client-js/pull/60 is
+      //  included in a release
+      afterEach(async () => {
+        // @ts-expect-error
+        globalThis.fetch = fetch
+      })
+    }
+
     after(async () => {
       await app.close()
     })
 
-    it('/api/v1/prompt returns expected response', async () => {
+    await it('/api/v1/prompt returns expected response', async () => {
       const res = await fetch(`http://localhost:${port}/api/v1/prompt`, {
         method: 'POST',
         headers: {
@@ -79,11 +91,11 @@ for (const { name, config } of providers) {
       })
       assert.strictEqual(res.headers.get('content-type'), 'application/json; charset=utf-8')
 
-      const body = await res.json()
+      const body: any = await res.json()
       assert.strictEqual(body.response, MOCK_CONTENT_RESPONSE)
     })
 
-    it('/api/v1/stream returns expected response', async () => {
+    await it('/api/v1/stream returns expected response', async () => {
       assert.strictEqual(chunkCallbackCalled, false)
 
       const res = await fetch(`http://localhost:${port}/api/v1/stream`, {
@@ -152,7 +164,7 @@ it('calls the preResponseCallback', async () => {
 
   assert.strictEqual(callbackCalled, true)
 
-  const body = await res.json()
+  const body: any = await res.json()
   assert.strictEqual(body.response, `${MOCK_CONTENT_RESPONSE} modified`)
 
   await app.close()
