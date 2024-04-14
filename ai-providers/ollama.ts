@@ -37,11 +37,16 @@ class OllamaByteSource implements UnderlyingByteSource {
   }
 }
 
+interface OllamaProviderCtorOptions {
+  host: string
+  model: string
+}
+
 export class OllamaProvider implements AiProvider {
   model: string
   client: Ollama
 
-  constructor (host: string, model: string) {
+  constructor ({ host, model }: OllamaProviderCtorOptions) {
     this.model = model
     this.client = new Ollama({ host })
   }

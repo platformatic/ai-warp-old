@@ -81,11 +81,16 @@ class OpenAiByteSource implements UnderlyingByteSource {
   }
 }
 
+interface OpenAiProviderCtorOptions {
+  model: string
+  apiKey: string
+}
+
 export class OpenAiProvider implements AiProvider {
   model: string
   client: OpenAI
 
-  constructor (model: string, apiKey: string) {
+  constructor ({ model, apiKey }: OpenAiProviderCtorOptions) {
     this.model = model
     // @ts-expect-error
     this.client = new OpenAI({ apiKey, fetch })

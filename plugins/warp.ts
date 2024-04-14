@@ -12,14 +12,11 @@ const UnknownAiProviderError = createError('UNKNOWN_AI_PROVIDER', 'Unknown AI Pr
 
 function build (aiProvider: AiWarpConfig['aiProvider']): AiProvider {
   if ('openai' in aiProvider) {
-    const { model, apiKey } = aiProvider.openai
-    return new OpenAiProvider(model, apiKey)
+    return new OpenAiProvider(aiProvider.openai)
   } else if ('mistral' in aiProvider) {
-    const { model, apiKey } = aiProvider.mistral
-    return new MistralProvider(model, apiKey)
+    return new MistralProvider(aiProvider.mistral)
   } else if ('ollama' in aiProvider) {
-    const { host, model } = aiProvider.ollama
-    return new OllamaProvider(host, model)
+    return new OllamaProvider(aiProvider.ollama)
   } else {
     throw new UnknownAiProviderError()
   }
