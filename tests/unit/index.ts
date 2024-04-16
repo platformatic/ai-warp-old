@@ -1,7 +1,5 @@
 import './generator.test'
 import './ai-providers.test'
-import { mockMistralApi, mockOllama, mockOpenAiApi } from '../utils/mocks'
+import { mockAllProviders } from '../utils/mocks'
 
-mockOpenAiApi()
-mockMistralApi()
-mockOllama()
+mockAllProviders()

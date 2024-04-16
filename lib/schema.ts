@@ -83,6 +83,26 @@ const aiWarpSchema = {
           },
           required: ['ollama'],
           additionalProperties: false
+        },
+        {
+          properties: {
+            azure: {
+              type: 'object',
+              properties: {
+                endpoint: { type: 'string' },
+                apiKey: { type: 'string' },
+                deploymentName: { type: 'string' },
+                allowInsecureConnections: {
+                  type: 'boolean',
+                  default: false
+                }
+              },
+              required: ['endpoint', 'apiKey', 'deploymentName'],
+              additionalProperties: false
+            }
+          },
+          required: ['azure'],
+          additionalProperties: false
         }
       ]
     },

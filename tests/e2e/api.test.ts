@@ -3,9 +3,11 @@ import { before, after, describe, it } from 'node:test'
 import assert from 'node:assert'
 import { FastifyInstance } from 'fastify'
 import fastifyPlugin from 'fastify-plugin'
-import { MOCK_CONTENT_RESPONSE, OLLAMA_MOCK_HOST, buildExpectedStreamBodyString } from '../utils/mocks'
 import { AiWarpConfig } from '../../config'
 import { buildAiWarpApp } from '../utils/stackable'
+import { AZURE_DEPLOYMENT_NAME, AZURE_MOCK_HOST } from '../utils/mocks/azure'
+import { MOCK_CONTENT_RESPONSE, buildExpectedStreamBodyString } from '../utils/mocks/base'
+import { OLLAMA_MOCK_HOST } from '../utils/mocks/ollama'
 
 const expectedStreamBody = buildExpectedStreamBodyString()
 
@@ -30,6 +32,17 @@ const providers: Provider[] = [
       ollama: {
         host: OLLAMA_MOCK_HOST,
         model: 'some-model'
+      }
+    }
+  },
+  {
+    name: 'Azure',
+    config: {
+      azure: {
+        endpoint: AZURE_MOCK_HOST,
+        apiKey: 'asd',
+        deploymentName: AZURE_DEPLOYMENT_NAME,
+        allowInsecureConnections: true
       }
     }
   },

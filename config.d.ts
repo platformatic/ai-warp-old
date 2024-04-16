@@ -262,6 +262,14 @@ export interface AiWarpConfig {
           host: string;
           model: string;
         };
+      }
+    | {
+        azure: {
+          endpoint: string;
+          apiKey: string;
+          deploymentName: string;
+          allowInsecureConnections?: boolean;
+        };
       };
   promptDecorators?: {
     prefix?: string;
