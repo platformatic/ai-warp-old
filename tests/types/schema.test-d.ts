@@ -50,6 +50,14 @@ expectAssignable<AiWarpConfig>({
 })
 
 expectAssignable<AiWarpConfig>({
+  aiProvider: {
+    llama2: {
+      modelPath: '/some/model.bin'
+    }
+  }
+})
+
+expectAssignable<AiWarpConfig>({
   $schema: './stackable.schema.json',
   service: {
     openapi: true

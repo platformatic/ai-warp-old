@@ -103,6 +103,20 @@ const aiWarpSchema = {
           },
           required: ['azure'],
           additionalProperties: false
+        },
+        {
+          properties: {
+            llama2: {
+              type: 'object',
+              properties: {
+                modelPath: { type: 'string' }
+              },
+              required: ['modelPath'],
+              additionalProperties: false
+            }
+          },
+          required: ['llama2'],
+          additionalProperties: false
         }
       ]
     },

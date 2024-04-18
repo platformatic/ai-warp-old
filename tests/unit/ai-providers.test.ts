@@ -9,8 +9,11 @@ import { AzureProvider } from '../../ai-providers/azure.js'
 import { MOCK_CONTENT_RESPONSE, buildExpectedStreamBodyString } from '../utils/mocks/base.js'
 import { OLLAMA_MOCK_HOST } from '../utils/mocks/ollama.js'
 import { AZURE_DEPLOYMENT_NAME, AZURE_MOCK_HOST } from '../utils/mocks/azure.js'
+import { mockLlama2 } from '../utils/mocks/llama2.js'
 
 const expectedStreamBody = buildExpectedStreamBodyString()
+
+const { Llama2Provider: MockedLlamaProvider } = await mockLlama2()
 
 const providers: AiProvider[] = [
   new OpenAiProvider({ model: 'gpt-3.5-turbo', apiKey: '' }),
@@ -21,7 +24,8 @@ const providers: AiProvider[] = [
     apiKey: 'abc',
     deploymentName: AZURE_DEPLOYMENT_NAME,
     allowInsecureConnections: true
-  })
+  }),
+  new MockedLlamaProvider({ modelPath: '' })
 ]
 
 for (const provider of providers) {

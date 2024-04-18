@@ -270,6 +270,11 @@ export interface AiWarpConfig {
           deploymentName: string;
           allowInsecureConnections?: boolean;
         };
+      }
+    | {
+        llama2: {
+          modelPath: string;
+        };
       };
   promptDecorators?: {
     prefix?: string;

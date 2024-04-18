@@ -9,6 +9,7 @@ import { generatePlugins } from '@platformatic/generators/lib/create-plugin.js'
 interface PackageJson {
   name: string
   version: string
+  devDependencies: Record<string, string>
 }
 
 class AiWarpGenerator extends ServiceGenerator {
@@ -95,6 +96,13 @@ class AiWarpGenerator extends ServiceGenerator {
           }
         }
         break
+      case 'llama2':
+        config.aiProvider = {
+          llama2: {
+            modelPath: '/path/to/model'
+          }
+        }
+        break
       default:
         config.aiProvider = {
           openai: {
@@ -129,6 +137,10 @@ class AiWarpGenerator extends ServiceGenerator {
 
     this.config.dependencies = {
       [packageJson.name]: `^${packageJson.version}`
+    }
+
+    if (this.config.aiProvider === 'llama2') {
+      this.config.dependencies['node-llama-cpp'] = packageJson.devDependencies['node-llama-cpp']
     }
   }
 
