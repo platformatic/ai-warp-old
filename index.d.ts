@@ -9,8 +9,14 @@ declare module 'fastify' {
     ai: {
       warp: (request: FastifyRequest, prompt: string) => Promise<string>
       warpStream: (request: FastifyRequest, prompt: string) => Promise<ReadableStream>
-      preResponseCallback?: ((request: FastifyRequest, response: string) => string) | ((request: FastifyRequest, response: string) => Promise<string>)
-      preResponseChunkCallback?: ((request: FastifyRequest, response: string) => string) | ((request: FastifyRequest, response: string) => Promise<string>)
+      preResponseCallback?: ((request: FastifyRequest, response: string) => void) |
+      ((request: FastifyRequest, response: string) => string) |
+      ((request: FastifyRequest, response: string) => Promise<void>) |
+      ((request: FastifyRequest, response: string) => Promise<string>)
+      preResponseChunkCallback?: ((request: FastifyRequest, response: string) => void) |
+      ((request: FastifyRequest, response: string) => string) |
+      ((request: FastifyRequest, response: string) => Promise<void>) |
+      ((request: FastifyRequest, response: string) => Promise<string>)
       rateLimiting: {
         max?: ((req: FastifyRequest, key: string) => number) | ((req: FastifyRequest, key: string) => Promise<number>)
         allowList?: (req: FastifyRequest, key: string) => boolean | Promise<boolean>
