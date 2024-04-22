@@ -39,7 +39,7 @@ export default fastifyPlugin(async (fastify) => {
 
       let response = await provider.ask(decoratedPrompt)
       if (fastify.ai.preResponseCallback !== undefined) {
-        response = await fastify.ai.preResponseCallback(request, response)
+        response = await fastify.ai.preResponseCallback(request, response) ?? response
       }
 
       return response
@@ -57,7 +57,7 @@ export default fastifyPlugin(async (fastify) => {
           if (fastify.ai.preResponseChunkCallback === undefined) {
             return response
           }
-          return await fastify.ai.preResponseChunkCallback(request, response)
+          return await fastify.ai.preResponseChunkCallback(request, response) ?? response
         }
       }
 
