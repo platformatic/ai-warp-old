@@ -1,5 +1,5 @@
 import { ReadableStream, UnderlyingByteSource, ReadableByteStreamController } from 'node:stream/web'
-import { ChatCompletionResponseChunk } from '@mistralai/mistralai'
+import { ChatCompletionResponseChunk } from '@platformatic/mistral-client'
 import { AiProvider, NoContentError, StreamChunkCallback } from './provider'
 import { AiStreamEvent, encodeEvent } from './event'
 
@@ -60,7 +60,7 @@ interface MistralProviderCtorOptions {
 export class MistralProvider implements AiProvider {
   model: string
   apiKey: string
-  client?: import('@mistralai/mistralai').default = undefined
+  client?: import('@platformatic/mistral-client').default = undefined
 
   constructor ({ model, apiKey }: MistralProviderCtorOptions) {
     this.model = model
@@ -69,7 +69,7 @@ export class MistralProvider implements AiProvider {
 
   async ask (prompt: string): Promise<string> {
     if (this.client === undefined) {
-      const { default: MistralClient } = await import('@mistralai/mistralai')
+      const { default: MistralClient } = await import('@platformatic/mistral-client')
       this.client = new MistralClient(this.apiKey)
     }
 
@@ -89,7 +89,7 @@ export class MistralProvider implements AiProvider {
 
   async askStream (prompt: string, chunkCallback?: StreamChunkCallback): Promise<ReadableStream> {
     if (this.client === undefined) {
-      const { default: MistralClient } = await import('@mistralai/mistralai')
+      const { default: MistralClient } = await import('@platformatic/mistral-client')
       this.client = new MistralClient(this.apiKey)
     }
 
