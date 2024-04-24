@@ -1,0 +1,47 @@
+name: Lint Markdown
+
+on:
+  push:
+    branches-ignore:
+      - main
+    paths:
+      - "**/*.md"
+  pull_request:
+    paths:
+      - "**/*.md"
+
+jobs:
+  setup-node-modules:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm install
+
+  lint-md:
+    name: Linting Markdown
+    runs-on: ubuntu-latest
+    needs: setup-node-modulessteps:
+      - name: Git Checkout
+        uses: actions/checkout@b4ffde65f46336ab88eb53be808477a3936bae11
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run Markdown Linting
+        run: npm run lint-md
