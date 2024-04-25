@@ -1,7 +1,7 @@
 import { buildServer } from '@platformatic/service'
 import { FastifyInstance } from 'fastify'
-import stackable from '../../index'
-import { AiWarpConfig } from '../../config'
+import stackable from '../../index.js'
+import { AiWarpConfig } from '../../config.js'
 
 declare module 'fastify' {
   interface FastifyInstance {

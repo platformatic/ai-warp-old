@@ -1,10 +1,10 @@
 import { ReadableStream, UnderlyingByteSource, ReadableByteStreamController } from 'node:stream/web'
 import OpenAI from 'openai'
-import { AiProvider, NoContentError, StreamChunkCallback } from './provider'
+import { AiProvider, NoContentError, StreamChunkCallback } from './provider.js'
 import { ReadableStream as ReadableStreamPolyfill } from 'web-streams-polyfill'
 import { fetch } from 'undici'
-import { ChatCompletionChunk } from 'openai/resources/index.mjs'
-import { AiStreamEvent, encodeEvent } from './event'
+import { ChatCompletionChunk } from 'openai/resources/index'
+import { AiStreamEvent, encodeEvent } from './event.js'
 import createError from '@fastify/error'
 
 const InvalidTypeError = createError<string>('DESERIALIZING_ERROR', 'Deserializing error: %s', 500)
@@ -125,6 +125,6 @@ export class OpenAiProvider implements AiProvider {
       ],
       stream: true
     })
-    return new ReadableStream(new OpenAiByteSource(response.toReadableStream(), chunkCallback))
+    return new ReadableStream(new OpenAiByteSource(response.toReadableStream() as ReadableStreamPolyfill, chunkCallback))
   }
 }

@@ -2,9 +2,9 @@ import { join } from 'node:path'
 import { readFile } from 'node:fs/promises'
 import { Generator as ServiceGenerator } from '@platformatic/service'
 import { BaseGenerator } from '@platformatic/generators'
-import { schema } from './schema'
-import { generateGlobalTypesFile } from './templates/types'
-import { generatePluginWithTypesSupport } from '@platformatic/generators/lib/create-plugin'
+import { schema } from './schema.js'
+import { generateGlobalTypesFile } from './templates/types.js'
+import { generatePlugins } from '@platformatic/generators/lib/create-plugin.js'
 
 interface PackageJson {
   name: string
@@ -22,7 +22,7 @@ class AiWarpGenerator extends ServiceGenerator {
       // TODO: temporary fix, when running the typescript files directly
       //  (in tests) this goes a directory above the actual project. Exposing
       //  temporarily until I come up with something better
-      aiWarpPackageJsonPath: join(__dirname, '..', '..', 'package.json')
+      aiWarpPackageJsonPath: join(import.meta.dirname, '..', '..', 'package.json')
     }
     return Object.assign({}, defaultBaseConfig, defaultConfig)
   }
@@ -147,7 +147,10 @@ class AiWarpGenerator extends ServiceGenerator {
     })
 
     if (this.config.plugin !== undefined && this.config.plugin) {
-      this.addFile(generatePluginWithTypesSupport(this.config.typescript ?? false))
+      const plugins = generatePlugins(this.config.typescript ?? false)
+      for (const plugin of plugins) {
+        this.addFile(plugin)
+      }
     }
   }
 

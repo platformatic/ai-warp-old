@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { join } from 'node:path'
 import { parseArgs } from 'node:util'
-import { Generator } from '../lib/generator'
+import { Generator } from '../lib/generator.js'
 
 async function execute (): Promise<void> {
   const args = parseArgs({

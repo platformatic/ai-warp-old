@@ -1,4 +1,4 @@
-import { MOCK_AGENT, MOCK_CONTENT_RESPONSE, MOCK_STREAMING_CONTENT_CHUNKS, establishMockAgent } from './base'
+import { MOCK_AGENT, MOCK_CONTENT_RESPONSE, MOCK_STREAMING_CONTENT_CHUNKS, establishMockAgent } from './base.js'
 
 export const OLLAMA_MOCK_HOST = 'http://127.0.0.1:41434'
 let isOllamaMocked = false
@@ -19,7 +19,7 @@ export function mockOllama (): void {
   pool.intercept({
     path: '/api/chat',
     method: 'POST'
-  }).reply(200, (opts) => {
+  }).reply(200, (opts: any) => {
     if (typeof opts.body !== 'string') {
       throw new Error(`body is not a string (${typeof opts.body})`)
     }

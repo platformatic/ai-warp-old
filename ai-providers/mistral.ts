@@ -1,7 +1,7 @@
 import { ReadableStream, UnderlyingByteSource, ReadableByteStreamController } from 'node:stream/web'
-import { ChatCompletionResponseChunk } from '@platformatic/mistral-client'
-import { AiProvider, NoContentError, StreamChunkCallback } from './provider'
-import { AiStreamEvent, encodeEvent } from './event'
+import MistralClient, { ChatCompletionResponseChunk } from '@platformatic/mistral-client'
+import { AiProvider, NoContentError, StreamChunkCallback } from './provider.js'
+import { AiStreamEvent, encodeEvent } from './event.js'
 
 type MistralStreamResponse = AsyncGenerator<ChatCompletionResponseChunk, void, unknown>
 
@@ -59,20 +59,14 @@ interface MistralProviderCtorOptions {
 
 export class MistralProvider implements AiProvider {
   model: string
-  apiKey: string
-  client?: import('@platformatic/mistral-client').default = undefined
+  client: MistralClient
 
   constructor ({ model, apiKey }: MistralProviderCtorOptions) {
     this.model = model
-    this.apiKey = apiKey
+    this.client = new MistralClient(apiKey)
   }
 
   async ask (prompt: string): Promise<string> {
-    if (this.client === undefined) {
-      const { default: MistralClient } = await import('@platformatic/mistral-client')
-      this.client = new MistralClient(this.apiKey)
-    }
-
     const response = await this.client.chat({
       model: this.model,
       messages: [
@@ -88,11 +82,6 @@ export class MistralProvider implements AiProvider {
   }
 
   async askStream (prompt: string, chunkCallback?: StreamChunkCallback): Promise<ReadableStream> {
-    if (this.client === undefined) {
-      const { default: MistralClient } = await import('@platformatic/mistral-client')
-      this.client = new MistralClient(this.apiKey)
-    }
-
     const response = this.client.chatStream({
       model: this.model,
       messages: [

@@ -1,17 +1,17 @@
 import { platformaticService, Stackable } from '@platformatic/service'
 import fastifyUser from 'fastify-user'
 import fastifyPlugin from 'fastify-plugin'
-import { schema } from './lib/schema'
-import { Generator } from './lib/generator'
-import { AiWarpConfig } from './config'
-import warpPlugin from './plugins/warp'
-import authPlugin from './plugins/auth'
-import apiPlugin from './plugins/api'
-import rateLimitPlugin from './plugins/rate-limiting'
+import { schema } from './lib/schema.js'
+import { Generator } from './lib/generator.js'
+import { AiWarpConfig } from './config.js'
+import warpPlugin from './plugins/warp.js'
+import authPlugin from './plugins/auth.js'
+import apiPlugin from './plugins/api.js'
+import rateLimitPlugin from './plugins/rate-limiting.js'
 
 const stackable: Stackable<AiWarpConfig> = async function (fastify, opts) {
   const { config } = fastify.platformatic
-  await fastify.register(fastifyUser, config.auth)
+  await fastify.register(fastifyUser as any, config.auth)
   await fastify.register(authPlugin, opts)
 
   await fastify.register(warpPlugin, opts) // needs to be registered here for fastify.ai to be decorated

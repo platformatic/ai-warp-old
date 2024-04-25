@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-floating-promises */
 import { it } from 'node:test'
 import assert from 'node:assert'
-import { buildAiWarpApp } from '../utils/stackable'
-import { AiWarpConfig } from '../../config'
-import { authConfig, createToken } from '../utils/auth'
+import { buildAiWarpApp } from '../utils/stackable.js'
+import { AiWarpConfig } from '../../config.js'
+import { authConfig, createToken } from '../utils/auth.js'
 
 const aiProvider: AiWarpConfig['aiProvider'] = {
   openai: {

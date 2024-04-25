@@ -3,11 +3,11 @@ import { before, after, describe, it } from 'node:test'
 import assert from 'node:assert'
 import { FastifyInstance } from 'fastify'
 import fastifyPlugin from 'fastify-plugin'
-import { AiWarpConfig } from '../../config'
-import { buildAiWarpApp } from '../utils/stackable'
-import { AZURE_DEPLOYMENT_NAME, AZURE_MOCK_HOST } from '../utils/mocks/azure'
-import { MOCK_CONTENT_RESPONSE, buildExpectedStreamBodyString } from '../utils/mocks/base'
-import { OLLAMA_MOCK_HOST } from '../utils/mocks/ollama'
+import { AiWarpConfig } from '../../config.js'
+import { buildAiWarpApp } from '../utils/stackable.js'
+import { AZURE_DEPLOYMENT_NAME, AZURE_MOCK_HOST } from '../utils/mocks/azure.js'
+import { MOCK_CONTENT_RESPONSE, buildExpectedStreamBodyString } from '../utils/mocks/base.js'
+import { OLLAMA_MOCK_HOST } from '../utils/mocks/ollama.js'
 
 const expectedStreamBody = buildExpectedStreamBodyString()
 

@@ -2,7 +2,7 @@ import { ReadableStream } from 'node:stream/web'
 import { FastifyInstance, FastifyRequest } from 'fastify'
 import { errorResponseBuilderContext } from '@fastify/rate-limit'
 import { expectAssignable } from 'tsd'
-import '../../index.d'
+import '../../index.js'
 
 expectAssignable<FastifyInstance['ai']['warp']>(async (_: FastifyRequest, _2: string) => '')
 

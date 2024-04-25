@@ -1,5 +1,5 @@
 import { expectAssignable } from 'tsd'
-import { AiWarpConfig } from '../../config'
+import { AiWarpConfig } from '../../config.js'
 
 expectAssignable<AiWarpConfig['aiProvider']>({
   openai: {
