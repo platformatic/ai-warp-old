@@ -4,7 +4,7 @@ import { FastifyInstance } from 'fastify'
 import createError from '@fastify/error'
 import fastifyPlugin from 'fastify-plugin'
 import fastifyRateLimit from '@fastify/rate-limit'
-import { AiWarpConfig } from '../config'
+import { AiWarpConfig } from '../config.js'
 
 interface RateLimitMax {
   // One claim to many values & maxes

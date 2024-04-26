@@ -290,6 +290,6 @@ const aiWarpSchema = {
 
 export { aiWarpSchema as schema }
 
-if (require.main === module) {
+if (process.argv.length > 2 && process.argv[2] === '--dump-schema') {
   console.log(JSON.stringify(aiWarpSchema, null, 2))
 }

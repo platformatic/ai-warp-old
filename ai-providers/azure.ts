@@ -1,18 +1,14 @@
 import { ReadableStream, ReadableByteStreamController, UnderlyingByteSource } from 'stream/web'
-import { AiProvider, NoContentError, StreamChunkCallback } from './provider'
-import { AiStreamEvent, encodeEvent } from './event'
+import { AiProvider, NoContentError, StreamChunkCallback } from './provider.js'
+import { AiStreamEvent, encodeEvent } from './event.js'
+import { AzureKeyCredential, ChatCompletions, EventStream, OpenAIClient } from '@azure/openai'
 
-// @ts-expect-error
-type AzureEventStream<T> = import('@azure/openai').EventStream<T>
-// @ts-expect-error
-type AzureChatCompletions = import('@azure/openai').ChatCompletions
-
-type AzureStreamResponse = AzureEventStream<AzureChatCompletions>
+type AzureStreamResponse = EventStream<ChatCompletions>
 
 class AzureByteSource implements UnderlyingByteSource {
   type: 'bytes' = 'bytes'
   response: AzureStreamResponse
-  reader?: ReadableStreamDefaultReader<AzureChatCompletions>
+  reader?: ReadableStreamDefaultReader<ChatCompletions>
   chunkCallback?: StreamChunkCallback
 
   constructor (response: AzureStreamResponse, chunkCallback?: StreamChunkCallback) {
@@ -84,33 +80,22 @@ interface AzureProviderCtorOptions {
 }
 
 export class AzureProvider implements AiProvider {
-  endpoint: string
   deploymentName: string
-  apiKey: string
-  // @ts-expect-error typescript doesn't like this type import even though
-  //  it's fine in the Mistral client?
-  client?: import('@azure/openai').OpenAIClient = undefined
-  allowInsecureConnections: boolean
+  client: OpenAIClient
 
   constructor ({ endpoint, apiKey, deploymentName, allowInsecureConnections }: AzureProviderCtorOptions) {
-    this.endpoint = endpoint
-    this.apiKey = apiKey
     this.deploymentName = deploymentName
-    this.allowInsecureConnections = allowInsecureConnections ?? false
+
+    this.client = new OpenAIClient(
+      endpoint,
+      new AzureKeyCredential(apiKey),
+      {
+        allowInsecureConnection: allowInsecureConnections
+      }
+    )
   }
 
   async ask (prompt: string): Promise<string> {
-    if (this.client === undefined) {
-      const { OpenAIClient, AzureKeyCredential } = await import('@azure/openai')
-      this.client = new OpenAIClient(
-        this.endpoint,
-        new AzureKeyCredential(this.apiKey),
-        {
-          allowInsecureConnection: this.allowInsecureConnections
-        }
-      )
-    }
-
     const { choices } = await this.client.getChatCompletions(this.deploymentName, [
       { role: 'user', content: prompt }
     ])
@@ -128,17 +113,6 @@ export class AzureProvider implements AiProvider {
   }
 
   async askStream (prompt: string, chunkCallback?: StreamChunkCallback | undefined): Promise<ReadableStream> {
-    if (this.client === undefined) {
-      const { OpenAIClient, AzureKeyCredential } = await import('@azure/openai')
-      this.client = new OpenAIClient(
-        this.endpoint,
-        new AzureKeyCredential(this.apiKey),
-        {
-          allowInsecureConnection: this.allowInsecureConnections
-        }
-      )
-    }
-
     const response = await this.client.streamChatCompletions(this.deploymentName, [
       { role: 'user', content: prompt }
     ])

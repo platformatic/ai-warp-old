@@ -2,9 +2,9 @@
 import { it } from 'node:test'
 import assert from 'node:assert'
 import fastifyPlugin from 'fastify-plugin'
-import { AiWarpConfig } from '../../config'
-import { buildAiWarpApp } from '../utils/stackable'
-import { authConfig, createToken } from '../utils/auth'
+import { AiWarpConfig } from '../../config.js'
+import { buildAiWarpApp } from '../utils/stackable.js'
+import { authConfig, createToken } from '../utils/auth.js'
 
 const aiProvider: AiWarpConfig['aiProvider'] = {
   openai: {

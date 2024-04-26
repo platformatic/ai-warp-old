@@ -1,7 +1,7 @@
 import { ReadableStream, UnderlyingByteSource, ReadableByteStreamController } from 'stream/web'
 import { Ollama, ChatResponse } from 'ollama'
-import { AiProvider, StreamChunkCallback } from './provider'
-import { AiStreamEvent, encodeEvent } from './event'
+import { AiProvider, StreamChunkCallback } from './provider.js'
+import { AiStreamEvent, encodeEvent } from './event.js'
 
 type OllamaStreamResponse = AsyncGenerator<ChatResponse>
 

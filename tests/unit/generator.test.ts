@@ -4,16 +4,16 @@ import assert from 'node:assert'
 import { existsSync } from 'node:fs'
 import { mkdir, rm, readFile } from 'node:fs/promises'
 import { join } from 'node:path'
-import AiWarpGenerator from '../../lib/generator'
-import { generateGlobalTypesFile } from '../../lib/templates/types'
-import { generatePluginWithTypesSupport } from '@platformatic/generators/lib/create-plugin'
+import AiWarpGenerator from '../../lib/generator.js'
+import { generateGlobalTypesFile } from '../../lib/templates/types.js'
+import { generatePluginWithTypesSupport } from '@platformatic/generators/lib/create-plugin.js'
 
-const tempDirBase = join(__dirname, 'tmp')
+const tempDirBase = join(import.meta.dirname, 'tmp')
 
 let counter = 0
 export async function getTempDir (baseDir: string): Promise<string> {
   if (baseDir === undefined) {
-    baseDir = __dirname
+    baseDir = import.meta.dirname
   }
   const dir = join(baseDir, `platformatic-generators-${process.pid}-${Date.now()}-${counter++}`)
   try {
@@ -39,7 +39,7 @@ describe('AiWarpGenerator', () => {
     const generator = new AiWarpGenerator()
     generator.setConfig({
       targetDirectory: dir,
-      aiWarpPackageJsonPath: join(__dirname, '..', '..', 'package.json'),
+      aiWarpPackageJsonPath: join(import.meta.dirname, '..', '..', 'package.json'),
       aiProvider: 'openai',
       aiModel: 'gpt-3.5-turbo'
     })
@@ -55,7 +55,7 @@ describe('AiWarpGenerator', () => {
     const generator = new AiWarpGenerator()
     generator.setConfig({
       targetDirectory: dir,
-      aiWarpPackageJsonPath: join(__dirname, '..', '..', 'package.json'),
+      aiWarpPackageJsonPath: join(import.meta.dirname, '..', '..', 'package.json'),
       aiProvider: 'openai',
       aiModel: 'gpt-3.5-turbo'
     })
@@ -77,7 +77,7 @@ describe('AiWarpGenerator', () => {
     const generator = new AiWarpGenerator()
     generator.setConfig({
       targetDirectory: dir,
-      aiWarpPackageJsonPath: join(__dirname, '..', '..', 'package.json'),
+      aiWarpPackageJsonPath: join(import.meta.dirname, '..', '..', 'package.json'),
       aiProvider: 'openai',
       aiModel: 'gpt-3.5-turbo'
     })
@@ -112,7 +112,7 @@ describe('AiWarpGenerator', () => {
     const generator = new AiWarpGenerator()
     generator.setConfig({
       targetDirectory: dir,
-      aiWarpPackageJsonPath: join(__dirname, '..', '..', 'package.json'),
+      aiWarpPackageJsonPath: join(import.meta.dirname, '..', '..', 'package.json'),
       aiProvider: 'openai',
       aiModel: 'gpt-3.5-turbo'
     })
@@ -128,7 +128,7 @@ describe('AiWarpGenerator', () => {
     const generator = new AiWarpGenerator()
     generator.setConfig({
       targetDirectory: dir,
-      aiWarpPackageJsonPath: join(__dirname, '..', '..', 'package.json'),
+      aiWarpPackageJsonPath: join(import.meta.dirname, '..', '..', 'package.json'),
       aiProvider: 'openai',
       aiModel: 'gpt-3.5-turbo',
       plugin: true
@@ -148,7 +148,7 @@ describe('AiWarpGenerator', () => {
     const generator = new AiWarpGenerator()
     generator.setConfig({
       targetDirectory: dir,
-      aiWarpPackageJsonPath: join(__dirname, '..', '..', 'package.json'),
+      aiWarpPackageJsonPath: join(import.meta.dirname, '..', '..', 'package.json'),
       aiProvider: 'openai',
       aiModel: 'gpt-3.5-turbo',
       plugin: true,

@@ -1,5 +1,5 @@
 import { Server, createServer } from 'node:http'
-import { MOCK_CONTENT_RESPONSE, MOCK_STREAMING_CONTENT_CHUNKS } from './base'
+import { MOCK_CONTENT_RESPONSE, MOCK_STREAMING_CONTENT_CHUNKS } from './base.js'
 
 export const AZURE_MOCK_HOST = 'http://127.0.0.1:41435'
 

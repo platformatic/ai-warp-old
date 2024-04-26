@@ -1,8 +1,8 @@
 import { after } from 'node:test'
-import { mockAzure } from './azure'
-import { mockMistralApi } from './mistral'
-import { mockOllama } from './ollama'
-import { mockOpenAiApi } from './open-ai'
+import { mockAzure } from './azure.js'
+import { mockMistralApi } from './mistral.js'
+import { mockOllama } from './ollama.js'
+import { mockOpenAiApi } from './open-ai.js'
 
 export function mockAllProviders (): void {
   mockOpenAiApi()

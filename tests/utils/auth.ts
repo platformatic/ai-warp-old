@@ -1,5 +1,5 @@
 import { createSigner } from 'fast-jwt'
-import { AiWarpConfig } from '../../config'
+import { AiWarpConfig } from '../../config.js'
 
 export const authConfig: AiWarpConfig['auth'] = {
   required: true,

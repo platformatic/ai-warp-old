@@ -1,13 +1,13 @@
 // eslint-disable-next-line
 /// <reference path="../index.d.ts" />
 import fastifyPlugin from 'fastify-plugin'
-import { OpenAiProvider } from '../ai-providers/open-ai'
+import { OpenAiProvider } from '../ai-providers/open-ai.js'
 import { MistralProvider } from '../ai-providers/mistral.js'
-import { AiProvider, StreamChunkCallback } from '../ai-providers/provider'
-import { AiWarpConfig } from '../config'
+import { AiProvider, StreamChunkCallback } from '../ai-providers/provider.js'
+import { AiWarpConfig } from '../config.js'
 import createError from '@fastify/error'
-import { OllamaProvider } from '../ai-providers/ollama'
-import { AzureProvider } from '../ai-providers/azure'
+import { OllamaProvider } from '../ai-providers/ollama.js'
+import { AzureProvider } from '../ai-providers/azure.js'
 
 const UnknownAiProviderError = createError('UNKNOWN_AI_PROVIDER', 'Unknown AI Provider')
 

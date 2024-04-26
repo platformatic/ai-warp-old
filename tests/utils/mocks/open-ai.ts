@@ -1,4 +1,4 @@
-import { MOCK_AGENT, MOCK_CONTENT_RESPONSE, MOCK_STREAMING_CONTENT_CHUNKS, establishMockAgent } from './base'
+import { MOCK_AGENT, MOCK_CONTENT_RESPONSE, MOCK_STREAMING_CONTENT_CHUNKS, establishMockAgent } from './base.js'
 
 let isOpenAiMocked = false
 
@@ -19,7 +19,7 @@ export function mockOpenAiApi (): void {
   pool.intercept({
     path: '/v1/chat/completions',
     method: 'POST'
-  }).reply(200, (opts) => {
+  }).reply(200, (opts: any) => {
     if (typeof opts.body !== 'string') {
       throw new Error(`body is not a string (${typeof opts.body})`)
     }
