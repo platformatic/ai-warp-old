@@ -8,6 +8,7 @@ import { AiWarpConfig } from '../config.js'
 import createError from '@fastify/error'
 import { OllamaProvider } from '../ai-providers/ollama.js'
 import { AzureProvider } from '../ai-providers/azure.js'
+import { Llama2Provider } from '../ai-providers/llama2.js'
 
 const UnknownAiProviderError = createError('UNKNOWN_AI_PROVIDER', 'Unknown AI Provider')
 
@@ -20,6 +21,8 @@ function build (aiProvider: AiWarpConfig['aiProvider']): AiProvider {
     return new OllamaProvider(aiProvider.ollama)
   } else if ('azure' in aiProvider) {
     return new AzureProvider(aiProvider.azure)
+  } else if ('llama2' in aiProvider) {
+    return new Llama2Provider(aiProvider.llama2)
   } else {
     throw new UnknownAiProviderError()
   }
