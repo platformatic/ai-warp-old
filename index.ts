@@ -1,6 +1,8 @@
+import { join } from 'node:path'
 import { platformaticService, Stackable } from '@platformatic/service'
 import fastifyUser from 'fastify-user'
 import fastifyPlugin from 'fastify-plugin'
+import fastifyStatic from '@fastify/static'
 import { schema } from './lib/schema.js'
 import { Generator } from './lib/generator.js'
 import { AiWarpConfig } from './config.js'
@@ -18,6 +20,12 @@ const stackable: Stackable<AiWarpConfig> = async function (fastify, opts) {
 
   await fastify.register(rateLimitPlugin, opts)
   await fastify.register(apiPlugin, opts)
+
+  if (config.showAiWarpHomepage !== undefined && config.showAiWarpHomepage) {
+    await fastify.register(fastifyStatic, {
+      root: join(import.meta.dirname, 'static')
+    })
+  }
 
   await fastify.register(platformaticService, opts)
 }

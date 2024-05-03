@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Warp</title>
+</head>
+<body>
+    <div>
+        <label for="prompt-text">Prompt: </label>
+        <textarea name="prompt text" id="prompt-text" cols="60" rows="1"></textarea>
+        <button id="prompt-button">Prompt</button>
+    </div>
+
+    <p id="response"></p>
+
+    <script>
+        const promptText = document.getElementById('prompt-text')
+        const responseText = document.getElementById('response')
+
+        const promptButton = document.getElementById('prompt-button')
+        promptButton.onclick = async () => {
+            const res = await fetch('/api/v1/stream', {
+                method: 'POST',
+                headers: {
+                    'content-type': 'application/json'
+                },
+                body: JSON.stringify({
+                    prompt: promptText.value
+                })
+            })
+
+            if (res.status !== 200) {
+                const { message, code } = await res.json()
+                responseText.innerHTML = `Error: ${message} (${code})`
+                return
+            }
+
+            responseText.innerHTML = ''
+
+            const reader = res.body.getReader()
+            const decoder = new TextDecoder()
+            while (true) {
+                const { done, value } = await reader.read()
+                if (done) {
+                    break
+                }
+
+                const decodedValue = decoder.decode(value)
+                const lines = decodedValue.split('\n')
+
+                let i = 0
+                while (i < lines.length) {
+                    const line = lines[i]
+                    if (line.length === 0) {
+                        i++
+                        continue
+                    }
+
+                    if (!line.startsWith('event: ')) {
+                        responseText.innerHTML = `Unexpected event type line: ${line}`
+                        return
+                    }
+
+                    const dataLine = lines[i + 1]
+                    if (!dataLine.startsWith('data: ')) {
+                        responseText.innerHTML = `Unexpected data line: ${dataLine}`
+                        return
+                    }
+
+                    const eventType = line.substring('event: '.length)
+                    const data = dataLine.substring('data: '.length)
+                    const json = JSON.parse(data)
+                    if (eventType === 'content') {
+                        const { response } = json
+                        responseText.innerHTML += response
+                    } else if (eventType === 'error') {
+                        const { message, code } = data
+                        responseText.innerHTML = `Error: ${message} (${code})`
+                    }
+
+                    i += 2
+                }
+            }
+        }
+    </script>
+</body>
+</html>
