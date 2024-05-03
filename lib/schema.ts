@@ -7,6 +7,10 @@ const aiWarpSchema = {
   properties: {
     ...schema.schema.properties,
     module: { type: 'string' },
+    showAiWarpHomepage: {
+      type: 'boolean',
+      default: true
+    },
     aiProvider: {
       type: 'object',
       oneOf: [

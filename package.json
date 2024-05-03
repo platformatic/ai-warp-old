@@ -8,7 +8,7 @@
     "start-ai-warp": "./dist/cli/start.js"
   },
   "scripts": {
-    "build": "tsc --build",
+    "build": "tsc --build && cp -r ./static ./dist/",
     "build:config": "node ./dist/lib/schema.js --dump-schema | json2ts > config.d.ts",
     "clean": "rm -fr ./dist",
     "lint": "ts-standard | snazzy",
@@ -38,6 +38,7 @@
     "@azure/openai": "^1.0.0-beta.12",
     "@fastify/error": "^3.4.1",
     "@fastify/rate-limit": "^9.1.0",
+    "@fastify/static": "^7.0.3",
     "@fastify/type-provider-typebox": "^4.0.0",
     "@platformatic/config": "^1.24.0",
     "@platformatic/generators": "^1.24.0",

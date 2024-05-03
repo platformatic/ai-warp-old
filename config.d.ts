@@ -223,6 +223,7 @@ export interface AiWarpConfig {
     }[];
   };
   module?: string;
+  showAiWarpHomepage?: boolean;
   aiProvider:
     | {
         openai: {
