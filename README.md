@@ -11,7 +11,7 @@ To get started using AI Warp, all you need to do is three steps:
     ```bash
     npm install
     npm run build
-    node ./dist/cli/create.js
+    npm run create
     ```
 
  2. Configure the app's Platformatic config file. By default, this is located
@@ -21,7 +21,7 @@ To get started using AI Warp, all you need to do is three steps:
  3. Start the app!
 
     ```bash
-    node ./dist/cli/start.js
+    npm start
     ```
 
 For more information, see [CONTRIBUTING.md](./CONTRIBUTING.md) and [Documentation](#documentation).

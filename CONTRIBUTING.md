@@ -31,7 +31,7 @@ Steps for downloading and setting up AI Warp for local development.
  6. Generate the test app.
 
     ```bash
-    node ./dist/cli/create.js
+    npm run create
     ```
 
  7. Configure the test app's `platformatic.json` to your liking. By default, it
@@ -41,7 +41,7 @@ Steps for downloading and setting up AI Warp for local development.
  8. Start the test app.
 
     ```bash
-    node ./dist/cli/start.js -c <path to test app platformatic.json>
+    npm start
     ```
 
 ## Important Notes
@@ -52,7 +52,7 @@ app. This includes schema changes.
 ## Noteable Commands
 
 * `npm run build` - Build the app.
-* `npm run build:config` - Rebuild the config. **Make sure to build first.**
+* `npm run build:config` - Rebuild the config.
 * `npm run lint:fix` - Fix all formatting issues and console log any linting
 issues that need to be fixed in code.
 * `npm run test` - Run Unit, E2E, and Type tests.

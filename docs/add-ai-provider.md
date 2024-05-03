@@ -5,7 +5,7 @@ Documentation on how to support a new AI provider.
 
 ### 1. Setup your developer environment
 
-See [Dev Setup](./dev-setup.md).
+See [CONTRIBUTING](../CONTRIBUTING.md).
 
 ### 2. Add it to the Config Schema
 
