@@ -1,0 +1,79 @@
+#messages {
+    width: 50%;
+    height: 550px;
+    max-height: 550px;
+    margin-left: 25%;
+    margin-top: 50px;
+    overflow: scroll;
+    overflow-anchor: auto;
+}
+
+.message {
+    display: flex;
+}
+
+.message-avatar {
+    width: 5%;
+    padding-right: 15px;
+}
+
+.message-contents {
+    width: 100%;
+}
+
+.message-author {
+    margin-top: 0;
+    font-weight: 600;
+}
+
+.message-error {
+    background-color: rgba(250, 33, 33, 0.3);
+    border: 1px solid #FA2121;
+    border-radius: 4px;
+    color: #FA21214D;
+    padding: 4px 8px 4px 8px;
+}
+
+.message-options {
+    width: 100%;
+    background-color: rgb(234, 231, 231, 0.5);
+}
+
+.message-options button {
+    border: 0;
+    background-color: rgba(0, 0, 0, 0);
+    cursor: pointer;
+    float: right;
+}
+
+#prompt {
+    width: 50%;
+    margin-left: 25%;
+    margin-top: 50px;
+    display: flex;
+    justify-content: center;
+}
+
+#prompt-input {
+    width: 95%;
+    background-color: rgba(0, 0, 0, 0);
+    color: #FFFFFF;
+    padding: 10px;
+    border: 1px solid #FFFFFFB2;
+    border-right: 0;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+}
+
+#prompt-button {
+    width: 5%;
+    background-color: rgba(0, 0, 0, 0);
+    border: 1px solid #FFFFFFB2;
+    border-left: 0;
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+}
+
+#prompt-button:hover {
+    cursor: pointer;
+}
