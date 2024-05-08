@@ -53,6 +53,7 @@
     "ollama": "^0.5.0",
     "openai": "^4.28.4"
   },
+  "license": "Apache-2.0",
   "overrides": {
     "minimatch": "^5.0.0"
   },
