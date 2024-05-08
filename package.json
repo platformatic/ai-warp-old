@@ -55,7 +55,7 @@
   },
   "license": "Apache-2.0",
   "overrides": {
-    "minimatch": "^5.0.0"
+    "minimatch": "^9.0.0"
   },
   "tsd": {
     "directory": "tests/types"
