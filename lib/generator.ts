@@ -15,7 +15,7 @@ interface PackageJson {
 class AiWarpGenerator extends ServiceGenerator {
   private _packageJson: PackageJson | null = null
 
-  getDefaultConfig (): BaseGenerator.JSONValue {
+  getDefaultConfig (): { [x: string]: BaseGenerator.JSONValue } {
     const defaultBaseConfig = super.getDefaultConfig()
     const defaultConfig = {
       aiProvider: 'openai',
@@ -50,7 +50,7 @@ class AiWarpGenerator extends ServiceGenerator {
     ]
   }
 
-  async _getConfigFileContents (): Promise<BaseGenerator.JSONValue> {
+  async _getConfigFileContents (): Promise<{ [x: string]: BaseGenerator.JSONValue }> {
     const baseConfig = await super._getConfigFileContents()
     const packageJson = await this.getStackablePackageJson()
     const config = {
@@ -110,16 +110,6 @@ class AiWarpGenerator extends ServiceGenerator {
             apiKey: `{${this.getEnvVarName('PLT_OPENAI_API_KEY')}}`
           }
         }
-    }
-
-    if (this.config.plugin !== undefined && this.config.plugin) {
-      Object.assign(config, {
-        plugins: {
-          paths: [
-            { path: './plugins', encapsulate: false }
-          ]
-        }
-      })
     }
 
     return Object.assign({}, baseConfig, config)
