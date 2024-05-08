@@ -23,7 +23,7 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
           response: Type.String()
         }),
         default: Type.Object({
-          code: Type.String(),
+          code: Type.Optional(Type.String()),
           message: Type.String()
         })
       }

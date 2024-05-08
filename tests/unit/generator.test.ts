@@ -7,6 +7,8 @@ import { join } from 'node:path'
 import AiWarpGenerator from '../../lib/generator.js'
 import { generateGlobalTypesFile } from '../../lib/templates/types.js'
 import { generatePluginWithTypesSupport } from '@platformatic/generators/lib/create-plugin.js'
+import { mockAllProviders } from '../utils/mocks/index.js'
+mockAllProviders()
 
 const tempDirBase = join(import.meta.dirname, 'tmp')
 

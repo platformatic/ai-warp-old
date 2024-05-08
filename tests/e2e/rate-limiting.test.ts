@@ -5,6 +5,8 @@ import fastifyPlugin from 'fastify-plugin'
 import { AiWarpConfig } from '../../config.js'
 import { buildAiWarpApp } from '../utils/stackable.js'
 import { authConfig, createToken } from '../utils/auth.js'
+import { mockAllProviders } from '../utils/mocks/index.js'
+mockAllProviders()
 
 const aiProvider: AiWarpConfig['aiProvider'] = {
   openai: {
@@ -28,7 +30,15 @@ it('calls ai.rateLimiting.max callback', async () => {
 
     await app.start()
 
-    const res = await fetch(`http://localhost:${port}`)
+    const res = await fetch(`http://localhost:${port}/api/v1/prompt`, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        prompt: 'asd'
+      })
+    })
     assert.strictEqual(callbackCalled, true)
     assert.strictEqual(res.headers.get('x-ratelimit-limit'), `${expectedMax}`)
   } finally {
@@ -50,7 +60,15 @@ it('calls ai.rateLimiting.allowList callback', async () => {
 
     await app.start()
 
-    await fetch(`http://localhost:${port}`)
+    await fetch(`http://localhost:${port}/api/v1/prompt`, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        prompt: 'asd'
+      })
+    })
     assert.strictEqual(callbackCalled, true)
   } finally {
     await app.close()
@@ -76,13 +94,21 @@ it('calls ai.rateLimiting.onBanReach callback', async () => {
 
       app.ai.rateLimiting.errorResponseBuilder = () => {
         errorResponseBuilderCalled = true
-        return { error: 'rate limited' }
+        return { message: 'rate limited' }
       }
     }))
 
     await app.start()
 
-    await fetch(`http://localhost:${port}`)
+    await fetch(`http://localhost:${port}/api/v1/prompt`, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        prompt: 'asd'
+      })
+    })
     assert.strictEqual(onBanReachCalled, true)
     assert.strictEqual(errorResponseBuilderCalled, true)
   } finally {
@@ -104,7 +130,15 @@ it('calls ai.rateLimiting.keyGenerator callback', async () => {
 
     await app.start()
 
-    await fetch(`http://localhost:${port}`)
+    await fetch(`http://localhost:${port}/api/v1/prompt`, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        prompt: 'asd'
+      })
+    })
     assert.strictEqual(callbackCalled, true)
   } finally {
     await app.close()
@@ -120,13 +154,21 @@ it('calls ai.rateLimiting.errorResponseBuilder callback', async () => {
       app.ai.rateLimiting.max = () => 0
       app.ai.rateLimiting.errorResponseBuilder = () => {
         callbackCalled = true
-        return { error: 'rate limited' }
+        return { message: 'rate limited' }
       }
     }))
 
     await app.start()
 
-    await fetch(`http://localhost:${port}`)
+    await fetch(`http://localhost:${port}/api/v1/prompt`, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        prompt: 'asd'
+      })
+    })
     assert.strictEqual(callbackCalled, true)
   } finally {
     await app.close()
@@ -156,17 +198,27 @@ it('uses the max for a specific claim', async () => {
   try {
     await app.start()
 
-    let res = await fetch(`http://localhost:${port}`, {
+    let res = await fetch(`http://localhost:${port}/api/v1/prompt`, {
+      method: 'POST',
       headers: {
-        Authorization: `Bearer ${createToken({ rateLimitMax: '10' })}`
-      }
+        Authorization: `Bearer ${createToken({ rateLimitMax: '10' })}`,
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        prompt: 'asd'
+      })
     })
     assert.strictEqual(res.headers.get('x-ratelimit-limit'), '10')
 
-    res = await fetch(`http://localhost:${port}`, {
+    res = await fetch(`http://localhost:${port}/api/v1/prompt`, {
+      method: 'POST',
       headers: {
-        Authorization: `Bearer ${createToken({ rateLimitMax: '100' })}`
-      }
+        Authorization: `Bearer ${createToken({ rateLimitMax: '100' })}`,
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        prompt: 'asd'
+      })
     })
     assert.strictEqual(res.headers.get('x-ratelimit-limit'), '100')
   } finally {

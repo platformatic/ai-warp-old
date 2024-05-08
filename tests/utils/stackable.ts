@@ -21,12 +21,13 @@ export async function buildAiWarpApp (config: AiWarpConfig): Promise<[FastifyIns
     server: {
       port,
       forceCloseConnections: true,
-      healthCheck: {
-        enabled: false
-      },
+      healthCheck: false,
       logger: {
         level: 'silent'
       }
+    },
+    service: {
+      openapi: true
     },
     ...config
   }, stackable)

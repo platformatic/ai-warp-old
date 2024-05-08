@@ -1,4 +1,5 @@
-/* eslint-disable @typescript-eslint/no-floating-promises */
+/* eslint-disable @typescript
+* eslint/no-floating-promises */
 import { before, after, describe, it } from 'node:test'
 import assert from 'node:assert'
 import { FastifyInstance } from 'fastify'
@@ -8,8 +9,11 @@ import { buildAiWarpApp } from '../utils/stackable.js'
 import { AZURE_DEPLOYMENT_NAME, AZURE_MOCK_HOST } from '../utils/mocks/azure.js'
 import { MOCK_CONTENT_RESPONSE, buildExpectedStreamBodyString } from '../utils/mocks/base.js'
 import { OLLAMA_MOCK_HOST } from '../utils/mocks/ollama.js'
+import { mockAllProviders } from '../utils/mocks/index.js'
+mockAllProviders()
 
 const expectedStreamBody = buildExpectedStreamBodyString()
+
 
 interface Provider {
   name: string
@@ -108,6 +112,7 @@ for (const { name, config } of providers) {
           prompt: 'asd'
         })
       })
+
       assert.strictEqual(res.headers.get('content-type'), 'text/event-stream')
 
       assert.strictEqual(chunkCallbackCalled, true)
@@ -167,6 +172,62 @@ it('calls the preResponseCallback', async () => {
 
   const body = await res.json()
   assert.strictEqual(body.response, `${MOCK_CONTENT_RESPONSE} modified`)
+
+  await app.close()
+})
+
+it('provides all paths in OpenAPI', async () => {
+  const [app, port] = await buildAiWarpApp({
+    aiProvider: {
+      openai: {
+        model: 'gpt-3.5-turbo',
+        apiKey: ''
+      }
+    }
+  })
+
+  await app.start()
+
+  const res = await fetch(`http://localhost:${port}/documentation/json`)
+  const body = await res.json()
+
+  assert.deepStrictEqual(Object.keys(body.paths), [
+    '/api/v1/prompt',
+    '/api/v1/stream'
+  ])
+
+  await app.close()
+})
+
+it('prompt with wrong JSON', async () => {
+  const [app, port] = await buildAiWarpApp({
+    aiProvider: {
+      openai: {
+        model: 'gpt-3.5-turbo',
+        apiKey: ''
+      }
+    }
+  })
+
+  await app.start()
+
+  const res = await fetch(`http://localhost:${port}/api/v1/prompt`, {
+    method: 'POST',
+    headers: {
+      'content-type': 'application/json'
+    },
+    body: JSON.stringify({
+      prompt: 'asd'
+    }).slice(0, 10)
+  })
+
+  assert.strictEqual(res.status, 400)
+
+  const body = await res.json()
+
+  assert.deepStrictEqual(body, {
+    message: 'Unexpected end of JSON input'
+  })
 
   await app.close()
 })
