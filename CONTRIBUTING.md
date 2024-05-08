@@ -54,7 +54,7 @@ curl -L -O https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.2-GGUF/resolve
 
 Then, in your `platformatic.json` file, add:
 
-```
+```json
   "aiProvider": {
     "llama2": {
       "modelPath": "./mistral-7b-instruct-v0.2.Q8_0.gguf"
