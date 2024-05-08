@@ -4,6 +4,8 @@ import assert from 'node:assert'
 import { buildAiWarpApp } from '../utils/stackable.js'
 import { AiWarpConfig } from '../../config.js'
 import { authConfig, createToken } from '../utils/auth.js'
+import { mockAllProviders } from '../utils/mocks/index.js'
+mockAllProviders()
 
 const aiProvider: AiWarpConfig['aiProvider'] = {
   openai: {

@@ -10,6 +10,8 @@ import { MOCK_CONTENT_RESPONSE, buildExpectedStreamBodyString } from '../utils/m
 import { OLLAMA_MOCK_HOST } from '../utils/mocks/ollama.js'
 import { AZURE_DEPLOYMENT_NAME, AZURE_MOCK_HOST } from '../utils/mocks/azure.js'
 import { mockLlama2 } from '../utils/mocks/llama2.js'
+import { mockAllProviders } from '../utils/mocks/index.js'
+mockAllProviders()
 
 const expectedStreamBody = buildExpectedStreamBodyString()
 

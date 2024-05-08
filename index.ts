@@ -16,11 +16,6 @@ const stackable: Stackable<AiWarpConfig> = async function (fastify, opts) {
   await fastify.register(fastifyUser as any, config.auth)
   await fastify.register(authPlugin, opts)
 
-  await fastify.register(warpPlugin, opts) // needs to be registered here for fastify.ai to be decorated
-
-  await fastify.register(rateLimitPlugin, opts)
-  await fastify.register(apiPlugin, opts)
-
   if (config.showAiWarpHomepage !== undefined && config.showAiWarpHomepage) {
     await fastify.register(fastifyStatic, {
       root: join(import.meta.dirname, 'static')
@@ -28,6 +23,11 @@ const stackable: Stackable<AiWarpConfig> = async function (fastify, opts) {
   }
 
   await fastify.register(platformaticService, opts)
+
+  await fastify.register(warpPlugin, opts) // needs to be registered here for fastify.ai to be decorated
+
+  await fastify.register(rateLimitPlugin, opts)
+  await fastify.register(apiPlugin, opts)
 }
 
 stackable.configType = 'ai-warp-app'
