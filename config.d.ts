@@ -145,7 +145,11 @@ export interface AiWarpConfig {
         port?: number | string;
         hostname?: string;
         endpoint?: string;
-        server?: "own" | "parent";
+        server?: "own" | "parent" | "hide";
+        defaultMetrics?: {
+          enabled: boolean;
+        };
+        prefix?: string;
         auth?: {
           username: string;
           password: string;

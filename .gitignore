@@ -27,3 +27,5 @@ tags
 .clinic/
 
 ai-warp-app/
+
+*.gguf
