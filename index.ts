@@ -28,7 +28,6 @@ const stackable: Stackable<AiWarpConfig> = async function (fastify, opts) {
 
   await fastify.register(rateLimitPlugin, opts)
   await fastify.register(apiPlugin, opts)
-
 }
 
 stackable.configType = 'ai-warp-app'

@@ -1,5 +1,4 @@
-/* eslint-disable @typescript
-* eslint/no-floating-promises */
+/* eslint-disable @typescript-eslint/no-floating-promises */
 import { before, after, describe, it } from 'node:test'
 import assert from 'node:assert'
 import { FastifyInstance } from 'fastify'
@@ -13,7 +12,6 @@ import { mockAllProviders } from '../utils/mocks/index.js'
 mockAllProviders()
 
 const expectedStreamBody = buildExpectedStreamBodyString()
-
 
 interface Provider {
   name: string
