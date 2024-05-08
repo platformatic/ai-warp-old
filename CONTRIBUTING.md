@@ -46,7 +46,8 @@ Steps for downloading and setting up AI Warp for local development.
 
 ### Testing a local model with llama2
 
-To test a local model with with llama2, you can use the following to downloaded a tested model:
+To test a local model with with llama2, you can use the following to
+download the model we used for testing:
 
 ```bash
 curl -L -O https://huggingface.co/TheBloke/Mistral-7B-Instruct-v0.2-GGUF/resolve/main/mistral-7b-instruct-v0.2.Q8_0.gguf
