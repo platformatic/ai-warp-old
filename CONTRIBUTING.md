@@ -43,6 +43,21 @@ Steps for downloading and setting up AI Warp for local development.
     ```bash
     node ../dist/cli/start.js
     ```
+### Testing a model with OpenAI
+
+To test a remote model with with OpenAI, you can use the following to
+download the model we used for testing:
+
+```json
+  "aiProvider": {
+    "openai": {
+      "model": "gpt-3.5-turbo",
+      "apiKey": "{PLT_OPENAI_API_KEY}"
+    }
+  }
+```
+
+Make sure to add your OpenAI api key as `PLT_OPENAI_API_KEY` in your `.env` file.
 
 ### Testing a local model with llama2
 

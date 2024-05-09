@@ -1,4 +1,5 @@
 import { ReadableByteStreamController, ReadableStream, UnderlyingByteSource } from 'stream/web'
+import { FastifyLoggerInstance } from 'fastify'
 import {
   LLamaChatPromptOptions,
   LlamaChatSession,
@@ -60,13 +61,16 @@ class Llama2ByteSource implements UnderlyingByteSource {
   backloggedChunks: ChunkQueue = new ChunkQueue()
   finished: boolean = false
   controller?: ReadableByteStreamController
+  abortController: AbortController
 
-  constructor (session: LlamaChatSession, prompt: string, chunkCallback?: StreamChunkCallback) {
+  constructor (session: LlamaChatSession, prompt: string, logger: FastifyLoggerInstance, chunkCallback?: StreamChunkCallback) {
     this.session = session
     this.chunkCallback = chunkCallback
+    this.abortController = new AbortController()
 
     session.prompt(prompt, {
-      onToken: this.onToken
+      onToken: this.onToken,
+      signal: this.abortController.signal
     }).then(() => {
       this.finished = true
       // Don't close the stream if we still have chunks to send
@@ -75,11 +79,19 @@ class Llama2ByteSource implements UnderlyingByteSource {
       }
     }).catch((err: any) => {
       this.finished = true
-      if (this.controller !== undefined) {
-        this.controller.close()
+      logger.info({ err })
+      if (!this.abortController.signal.aborted && this.controller !== undefined) {
+        try {
+          this.controller.close()
+        } catch (err) {
+          logger.info({ err })
+        }
       }
-      throw err
     })
+  }
+
+  cancel (): void {
+    this.abortController.abort()
   }
 
   onToken: LLamaChatPromptOptions['onToken'] = async (chunk) => {
@@ -89,8 +101,14 @@ class Llama2ByteSource implements UnderlyingByteSource {
       return
     }
 
-    await this.clearBacklog()
-    await this.enqueueChunk(chunk)
+    try {
+      await this.clearBacklog()
+      await this.enqueueChunk(chunk)
+      // Ignore all errors, we can't do anything about them
+      // TODO: Log these errors
+    } catch (err) {
+      console.error(err)
+    }
   }
 
   private async enqueueChunk (chunk: number[]): Promise<void> {
@@ -101,6 +119,10 @@ class Llama2ByteSource implements UnderlyingByteSource {
     let response = this.session.context.decode(chunk)
     if (this.chunkCallback !== undefined) {
       response = await this.chunkCallback(response)
+    }
+
+    if (response === '') {
+      response = '\n' // It seems empty chunks are newlines
     }
 
     const eventData: AiStreamEvent = {
@@ -139,14 +161,17 @@ class Llama2ByteSource implements UnderlyingByteSource {
 
 interface Llama2ProviderCtorOptions {
   modelPath: string
+  logger: FastifyLoggerInstance
 }
 
 export class Llama2Provider implements AiProvider {
   context: LlamaContext
+  logger: FastifyLoggerInstance
 
-  constructor ({ modelPath }: Llama2ProviderCtorOptions) {
+  constructor ({ modelPath, logger }: Llama2ProviderCtorOptions) {
     const model = new LlamaModel({ modelPath })
     this.context = new LlamaContext({ model })
+    this.logger = logger
   }
 
   async ask (prompt: string): Promise<string> {
@@ -159,6 +184,6 @@ export class Llama2Provider implements AiProvider {
   async askStream (prompt: string, chunkCallback?: StreamChunkCallback): Promise<ReadableStream> {
     const session = new LlamaChatSession({ context: this.context })
 
-    return new ReadableStream(new Llama2ByteSource(session, prompt, chunkCallback))
+    return new ReadableStream(new Llama2ByteSource(session, prompt, this.logger, chunkCallback))
   }
 }

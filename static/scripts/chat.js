@@ -7,7 +7,7 @@ const messagesElement = document.getElementById('messages')
 /**
  * List of completed messages to easily keep track of them instead of making
  *  calls to the DOM
- * 
+ *
  * { type: 'prompt' | 'response' | 'error', message?: string }
  */
 const messages = []
