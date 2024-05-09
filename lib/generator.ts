@@ -26,7 +26,7 @@ class AiWarpGenerator extends ServiceGenerator {
       // TODO: temporary fix, when running the typescript files directly
       //  (in tests) this goes a directory above the actual project. Exposing
       //  temporarily until I come up with something better
-      aiWarpPackageJsonPath: join(import.meta.dirname, '..', '..', 'package.json')
+      aiWarpPackageJsonPath: join(dir, '..', '..', 'package.json')
     }
     return Object.assign({}, defaultBaseConfig, defaultConfig)
   }
