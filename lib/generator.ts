@@ -1,4 +1,4 @@
-import { join } from 'node:path'
+import { join, dirname } from 'node:path'
 import { readFile } from 'node:fs/promises'
 import { Generator as ServiceGenerator } from '@platformatic/service'
 import { BaseGenerator } from '@platformatic/generators'
@@ -6,7 +6,6 @@ import { schema } from './schema.js'
 import { generateGlobalTypesFile } from './templates/types.js'
 import { generatePlugins } from '@platformatic/generators/lib/create-plugin.js'
 import { fileURLToPath } from 'node:url'
-import { dirname } from 'node:path'
 
 interface PackageJson {
   name: string
@@ -19,6 +18,7 @@ class AiWarpGenerator extends ServiceGenerator {
 
   getDefaultConfig (): { [x: string]: BaseGenerator.JSONValue } {
     const defaultBaseConfig = super.getDefaultConfig()
+    // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
     const dir = import.meta.dirname || dirname(fileURLToPath(import.meta.url))
     const defaultConfig = {
       aiProvider: 'openai',

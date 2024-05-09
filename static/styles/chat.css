@@ -36,14 +36,42 @@
 
 .message-options {
     width: 100%;
-    background-color: rgb(234, 231, 231, 0.5);
+    display: inline-block;
 }
 
 .message-options button {
     border: 0;
     background-color: rgba(0, 0, 0, 0);
     cursor: pointer;
+}
+
+.response-index-selector {
+    display: flex;
+    float: left;
+}
+
+.message-options-right {
     float: right;
+}
+
+.response-index-selector p {
+    margin: 0;
+}
+
+.submit-prompt-edit-button {
+    padding: 8px !important;
+    background: white !important;
+    border: 1px solid white !important;
+    border-radius: 4px;
+    color: #00050B;
+    margin-right: 8px;
+}
+
+.cancel-prompt-edit-button {
+    padding: 8px !important;
+    border: 1px solid white !important;
+    border-radius: 4px;
+    color: white;
 }
 
 #prompt {
