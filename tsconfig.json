@@ -24,6 +24,7 @@
     ]
   },
   "exclude": [
-    "ai-warp-app"
+    "ai-warp-app",
+    "dist"
   ]
 }

@@ -1,8 +1,5 @@
 tests
-src
-static
-lib
-plugins
+/static
 CONTIBUTING.md
 renovate.json
 tsconfig.json
