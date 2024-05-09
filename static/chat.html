@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat - AI Warp</title>
+    
+    <link rel="stylesheet" href="/styles/common.css">
+    <link rel="stylesheet" href="/styles/chat.css">
+</head>
+<body>
+    <div id="navbar">
+        <a href="https://platformatic.dev">
+            <img id="navbar-logo" src="/images/platformatic-logo.svg" alt="Platformatic">
+        </a>
+    </div>
+
+    <div id="messages"></div>
+
+    <div id="prompt">
+        <input id="prompt-input" type="text" placeholder="Enter your prompt to Platformatic Ai-Warp" />
+        <button id="prompt-button" type="button">
+            <img src="/images/icons/arrow-long-right.svg" />
+        </button>
+    </div>
+
+    <div id="bottom-links">
+        <a href="/chat.html">Start a new chat</a>
+        <a href="/documentation">View OpenAPI Documentation</a>
+    </div>
+
+    <script src="/scripts/chat.js"></script>
+</body>
+</html>

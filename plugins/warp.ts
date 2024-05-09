@@ -1,5 +1,6 @@
 // eslint-disable-next-line
 /// <reference path="../index.d.ts" />
+import { FastifyLoggerInstance } from 'fastify'
 import fastifyPlugin from 'fastify-plugin'
 import { OpenAiProvider } from '../ai-providers/open-ai.js'
 import { MistralProvider } from '../ai-providers/mistral.js'
@@ -12,7 +13,7 @@ import { Llama2Provider } from '../ai-providers/llama2.js'
 
 const UnknownAiProviderError = createError('UNKNOWN_AI_PROVIDER', 'Unknown AI Provider')
 
-function build (aiProvider: AiWarpConfig['aiProvider']): AiProvider {
+function build (aiProvider: AiWarpConfig['aiProvider'], logger: FastifyLoggerInstance): AiProvider {
   if ('openai' in aiProvider) {
     return new OpenAiProvider(aiProvider.openai)
   } else if ('mistral' in aiProvider) {
@@ -22,7 +23,10 @@ function build (aiProvider: AiWarpConfig['aiProvider']): AiProvider {
   } else if ('azure' in aiProvider) {
     return new AzureProvider(aiProvider.azure)
   } else if ('llama2' in aiProvider) {
-    return new Llama2Provider(aiProvider.llama2)
+    return new Llama2Provider({
+      ...aiProvider.llama2,
+      logger
+    })
   } else {
     throw new UnknownAiProviderError()
   }
@@ -30,7 +34,7 @@ function build (aiProvider: AiWarpConfig['aiProvider']): AiProvider {
 
 export default fastifyPlugin(async (fastify) => {
   const { config } = fastify.platformatic
-  const provider = build(config.aiProvider)
+  const provider = build(config.aiProvider, fastify.log)
 
   fastify.decorate('ai', {
     warp: async (request, prompt) => {

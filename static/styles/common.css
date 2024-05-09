@@ -1,0 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
+body {
+    background-color: #00050B;
+    padding: 0;
+    margin: 0;
+    color: white;
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 100;
+    font-style: normal;
+    font-variation-settings: "slnt" 0;
+}
+
+#navbar {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    width: 100%;
+    border-bottom: 2px solid #FFFFFF26;
+}
+
+#navbar-logo {
+    padding-left: 60px;
+}
+
+#bottom-links {
+    margin-top: 30px;
+    /* 30px on the bottom so there's a little space between it and the end of the page */
+    margin-bottom: 30px; 
+    text-align: center;
+}
+
+#bottom-links a {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    padding-left: 8px;
+    padding-right: 8px;
+    margin-right: 8px;
+    border: 1px solid #FFFFFFB2;
+    border-radius: 4px;
+    text-decoration: none;
+    color: #FFFFFF;
+}
