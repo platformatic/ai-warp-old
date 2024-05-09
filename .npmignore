@@ -1,9 +1,12 @@
 tests
 /static
+/lib
+/plugins
+/cli
 CONTIBUTING.md
 renovate.json
 tsconfig.json
 .github
 ai-warp-app*
 *gguf
-*.ts
+/index.*
