@@ -43,6 +43,7 @@ Steps for downloading and setting up AI Warp for local development.
     ```bash
     node ../dist/cli/start.js
     ```
+
 ### Testing a model with OpenAI
 
 To test a remote model with with OpenAI, you can use the following to
