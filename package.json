@@ -12,6 +12,7 @@
     "start": "node ./dist/cli/start.js -c ./ai-warp-app/platformatic.json",
     "build": "tsc --build && cp -r ./static ./dist/ && cp config.d.ts dist/",
     "build:config": "npm run build && node ./dist/lib/schema.js --dump-schema | json2ts > config.d.ts",
+    "prepare": "npm run build:config",
     "clean": "rm -fr ./dist",
     "lint": "ts-standard | snazzy",
     "lint:fix": "ts-standard --fix | snazzy",
