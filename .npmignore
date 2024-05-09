@@ -1,0 +1,12 @@
+tests
+src
+static
+lib
+plugins
+CONTIBUTING.md
+renovate.json
+tsconfig.json
+.github
+ai-warp-app*
+*gguf
+*.ts

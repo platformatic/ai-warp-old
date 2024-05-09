@@ -2,27 +2,27 @@
 /// <reference path="../index.d.ts" />
 import { FastifyLoggerInstance } from 'fastify'
 import fastifyPlugin from 'fastify-plugin'
-import { OpenAiProvider } from '../ai-providers/open-ai.js'
-import { MistralProvider } from '../ai-providers/mistral.js'
 import { AiProvider, StreamChunkCallback } from '../ai-providers/provider.js'
 import { AiWarpConfig } from '../config.js'
 import createError from '@fastify/error'
-import { OllamaProvider } from '../ai-providers/ollama.js'
-import { AzureProvider } from '../ai-providers/azure.js'
-import { Llama2Provider } from '../ai-providers/llama2.js'
 
 const UnknownAiProviderError = createError('UNKNOWN_AI_PROVIDER', 'Unknown AI Provider')
 
-function build (aiProvider: AiWarpConfig['aiProvider'], logger: FastifyLoggerInstance): AiProvider {
+async function build (aiProvider: AiWarpConfig['aiProvider'], logger: FastifyLoggerInstance): Promise<AiProvider> {
   if ('openai' in aiProvider) {
+    const { OpenAiProvider } = await import('../ai-providers/open-ai.js')
     return new OpenAiProvider(aiProvider.openai)
   } else if ('mistral' in aiProvider) {
+    const { MistralProvider } = await import('../ai-providers/mistral.js')
     return new MistralProvider(aiProvider.mistral)
   } else if ('ollama' in aiProvider) {
+    const { OllamaProvider } = await import('../ai-providers/ollama.js')
     return new OllamaProvider(aiProvider.ollama)
   } else if ('azure' in aiProvider) {
+    const { AzureProvider } = await import('../ai-providers/azure.js')
     return new AzureProvider(aiProvider.azure)
   } else if ('llama2' in aiProvider) {
+    const { Llama2Provider } = await import('../ai-providers/llama2.js')
     return new Llama2Provider({
       ...aiProvider.llama2,
       logger
@@ -34,7 +34,7 @@ function build (aiProvider: AiWarpConfig['aiProvider'], logger: FastifyLoggerIns
 
 export default fastifyPlugin(async (fastify) => {
   const { config } = fastify.platformatic
-  const provider = build(config.aiProvider, fastify.log)
+  const provider = await build(config.aiProvider, fastify.log)
 
   fastify.decorate('ai', {
     warp: async (request, prompt) => {

@@ -304,7 +304,7 @@ const aiWarpSchema = {
   required: [
     'aiProvider'
   ]
-}
+} as any
 
 export { aiWarpSchema as schema }
 

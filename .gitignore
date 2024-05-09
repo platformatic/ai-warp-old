@@ -26,6 +26,6 @@ tags
 # clinicjs
 .clinic/
 
-ai-warp-app/
+ai-warp-app*/
 
 *.gguf
