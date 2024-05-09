@@ -5,6 +5,8 @@ import { BaseGenerator } from '@platformatic/generators'
 import { schema } from './schema.js'
 import { generateGlobalTypesFile } from './templates/types.js'
 import { generatePlugins } from '@platformatic/generators/lib/create-plugin.js'
+import { fileURLToPath } from 'node:url'
+import { dirname } from 'node:path'
 
 interface PackageJson {
   name: string
@@ -17,6 +19,7 @@ class AiWarpGenerator extends ServiceGenerator {
 
   getDefaultConfig (): { [x: string]: BaseGenerator.JSONValue } {
     const defaultBaseConfig = super.getDefaultConfig()
+    const dir = import.meta.dirname || dirname(fileURLToPath(import.meta.url))
     const defaultConfig = {
       aiProvider: 'openai',
       aiModel: 'gpt-3.5-turbo',
