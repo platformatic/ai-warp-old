@@ -16,6 +16,7 @@ interface PackageJson {
 class AiWarpGenerator extends ServiceGenerator {
   private _packageJson: PackageJson | null = null
 
+
   getDefaultConfig (): { [x: string]: BaseGenerator.JSONValue } {
     const defaultBaseConfig = super.getDefaultConfig()
     // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
@@ -127,9 +128,15 @@ class AiWarpGenerator extends ServiceGenerator {
   async _beforePrepare (): Promise<void> {
     await super._beforePrepare()
 
-    this.addEnvVars({
-      PLT_AI_API_KEY: this.config.aiApiKey ?? 'sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
-    }, { overwrite: false })
+    if (this.config.aiProvider === 'llama2') {
+      this.addEnvVars({
+        PLT_AI_MODEL: this.config.aiModel ?? './model.gguf'
+      }, { overwrite: false })
+    } else {
+      this.addEnvVars({
+        PLT_AI_API_KEY: this.config.aiApiKey ?? 'sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+      }, { overwrite: false })
+    }
 
     const packageJson = await this.getStackablePackageJson()
 
@@ -184,6 +191,44 @@ class AiWarpGenerator extends ServiceGenerator {
       return packageJson as PackageJson
     }
     return this._packageJson
+  }
+
+  async prepareQuestions (): Promise<void> {
+    this.questions.push({
+      type: 'list',
+      name: 'aiProvider',
+      message: 'What AI provider would you like to use?',
+      default: true,
+      choices: ['openai', 'mistral', 'azure', 'ollama', 'llama2']
+    })
+
+    this.questions.push({
+      type: 'input',
+      name: 'aiModel',
+      message: 'What AI model would you like to use?',
+      default (answers: Record<string, string>) {
+        if (answers.aiProvider === 'openai') {
+          return 'gpt-3.5-turbo'
+        } else if (answers.aiProvider === 'mistral') {
+          return 'open-mistral-7b'
+        } else if (answers.aiProvider === 'azure') {
+          return 'gpt-35-turbo'
+        } else if (answers.aiProvider === 'ollama') {
+          return 'mistral'
+        } else if (answers.aiProvider === 'llama2') {
+          return './mymodel.gguf'
+        }
+        return 'gpt-3.5-turbo'
+      }
+    })
+
+    this.questions.push({
+      type: 'input',
+      name: 'aiApiKey',
+      when: (answers: Record<string, string>) => answers.aiProvider !== 'ollama' && answers.aiProvider !== 'llama2',
+      message: 'What is your OpenAI/Mistral/Azure API key?',
+      default: 'sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+    })
   }
 }
 

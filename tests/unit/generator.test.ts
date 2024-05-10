@@ -65,12 +65,10 @@ describe('AiWarpGenerator', () => {
 
     // Env file has the api key fields for all providers
     const envFile = await readFile(join(dir, '.env'), 'utf8')
-    assert.ok(envFile.includes('PLT_OPENAI_API_KEY'))
-    assert.ok(envFile.includes('PLT_MISTRAL_API_KEY'))
+    assert.ok(envFile.includes('PLT_AI_API_KEY'))
 
     const sampleEnvFile = await readFile(join(dir, '.env.sample'), 'utf8')
-    assert.ok(sampleEnvFile.includes('PLT_OPENAI_API_KEY'))
-    assert.ok(sampleEnvFile.includes('PLT_MISTRAL_API_KEY'))
+    assert.ok(sampleEnvFile.includes('PLT_AI_API_KEY'))
   })
 
   it('generates platformatic.json correctly', async () => {
@@ -89,7 +87,7 @@ describe('AiWarpGenerator', () => {
     assert.deepStrictEqual(configFile.aiProvider, {
       openai: {
         model: 'gpt-3.5-turbo',
-        apiKey: '{PLT_OPENAI_API_KEY}'
+        apiKey: '{PLT_AI_API_KEY}'
       }
     })
 
@@ -103,7 +101,7 @@ describe('AiWarpGenerator', () => {
     assert.deepStrictEqual(configFile.aiProvider, {
       mistral: {
         model: 'open-mistral-7b',
-        apiKey: '{PLT_MISTRAL_API_KEY}'
+        apiKey: '{PLT_AI_API_KEY}'
       }
     })
   })
