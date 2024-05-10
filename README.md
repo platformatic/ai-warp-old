@@ -23,3 +23,7 @@ For more information, see [CONTRIBUTING.md](./CONTRIBUTING.md) and [Documentatio
 * [Plugin API](./docs/plugin-api.md)
 * [Contributing](./CONTRIBUTING.md)
   * [Adding a AI Provider](./docs/add-ai-provider.md)
+
+## License
+
+Apache-2.0
