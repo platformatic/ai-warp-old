@@ -16,7 +16,6 @@ interface PackageJson {
 class AiWarpGenerator extends ServiceGenerator {
   private _packageJson: PackageJson | null = null
 
-
   getDefaultConfig (): { [x: string]: BaseGenerator.JSONValue } {
     const defaultBaseConfig = super.getDefaultConfig()
     // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
@@ -24,6 +23,7 @@ class AiWarpGenerator extends ServiceGenerator {
     const defaultConfig = {
       aiProvider: 'openai',
       aiModel: 'gpt-3.5-turbo',
+      localSchema: false,
       // TODO: temporary fix, when running the typescript files directly
       //  (in tests) this goes a directory above the actual project. Exposing
       //  temporarily until I come up with something better
@@ -53,7 +53,7 @@ class AiWarpGenerator extends ServiceGenerator {
       },
       {
         var: 'PLT_AI_API_KEY',
-        label: 'What is your OpenAI/Mistral/Azure API key?', 
+        label: 'What is your OpenAI/Mistral/Azure API key?',
         default: 'sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
         type: 'string'
       }
@@ -64,7 +64,7 @@ class AiWarpGenerator extends ServiceGenerator {
     const baseConfig = await super._getConfigFileContents()
     const packageJson = await this.getStackablePackageJson()
     const config = {
-      $schema: this.config.localSchema ? './stackable.schema.json' : `https://schemas.platformatic.dev/@platformatic/ai-warp/${packageJson.version}.json`,
+      $schema: this.config.localSchema as boolean ? './stackable.schema.json' : `https://schemas.platformatic.dev/@platformatic/ai-warp/${packageJson.version}.json`,
       module: packageJson.name,
       aiProvider: {},
       promptDecorators: {
@@ -157,7 +157,7 @@ class AiWarpGenerator extends ServiceGenerator {
       contents: generateGlobalTypesFile(packageJson.name)
     })
 
-    if (this.config.localSchema) {
+    if (this.config.localSchema as boolean) {
       this.addFile({
         path: '',
         file: 'stackable.schema.json',
