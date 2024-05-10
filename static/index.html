@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Warp</title>
     
+    <link rel="icon" type="image/x-icon" href="/images/favicon.svg">
     <link rel="stylesheet" href="/styles/common.css">
     <link rel="stylesheet" href="/styles/index.css">
 </head>
@@ -98,7 +99,7 @@
         }
 
         promptInput.onkeydown = (event) => {
-            if (event.key === 'Enter') {
+            if (event.key === 'Enter' && !event.shiftKey) {
                 promptButton.onclick()
             }
         }
