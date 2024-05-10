@@ -102,7 +102,7 @@ class AiWarpGenerator extends ServiceGenerator {
       case 'llama2':
         config.aiProvider = {
           llama2: {
-            modelPath: '/path/to/model'
+            modelPath: this.config.aiModel
           }
         }
         break

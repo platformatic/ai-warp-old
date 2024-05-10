@@ -236,7 +236,7 @@ function drawCompletedResponseMessageContents (parent, message) {
 async function drawStreamedMessageContents (parent, message) {
   let fullResponse = ''
   let current = document.createElement('p')
-  let newLine = true
+  let newLine = true 
   parent.appendChild(current)
 
   const parser = new SSEParser(message.response[message.responseIndex])
@@ -248,23 +248,31 @@ async function drawStreamedMessageContents (parent, message) {
 
     const tokenString = escapeHtml(tokens.join(''))
     fullResponse += tokenString
-
+    
     const lines = tokenString.split('\n')
-    for (let i = 0; i < lines.length; i++) {
-      if (newLine) {
-        lines[i] = lines[i].replace(/^ +/g, (spaces) => {
-          return spaces.split('').map(() => '&nbsp;').join('')
-        })
-        newLine = false
-      }
-      current.innerHTML += lines[i]
 
-      if (i + 1 < lines.length) {
-        current = document.createElement('p')
-        parent.appendChild(current)
-        current.scrollIntoView()
-        newLine = true
-      }
+    if (newLine) {
+      lines[0] = lines[0].replace(/^ +/g, (spaces) => {
+        return spaces.split('').map(() => '&nbsp;').join('')
+      })
+      newLine = false
+    }
+
+    // If there are is only one line, we can just append it to the current paragraph,
+    // otherwise we need to create a new paragraph for each line
+    current.innerHTML += lines[0]
+    current.scrollIntoView(false)
+
+    for (let i = 1; i < lines.length; i++) {
+      // console.log(`line (newline=${newLine})`, JSON.stringify(lines[i]))
+      current = document.createElement('p')
+      parent.appendChild(current)
+      current.scrollIntoView(false)
+      lines[i] = lines[i].replace(/^ +/g, (spaces) => {
+        return spaces.split('').map(() => '&nbsp;').join('')
+      })
+      current.innerHTML += lines[i]
+      newLine = true
     }
   }
 
