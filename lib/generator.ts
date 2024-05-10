@@ -49,6 +49,30 @@ class AiWarpGenerator extends ServiceGenerator {
         default: 'gpt-3.5-turbo',
         type: 'string',
         configValue: 'aiModel'
+      },
+      {
+        var: 'PLT_OPENAPI_API_KEY',
+        label: 'What is your OpenAI API key?',
+        default: '',
+        type: 'string'
+      },
+      {
+        var: 'PLT_MISTRAL_API_KEY',
+        label: 'What is your Mistral API key?',
+        default: '',
+        type: 'string'
+      },
+      {
+        var: 'PLT_AZURE_API_KEY',
+        label: 'What is your AZURE API key?',
+        default: '',
+        type: 'string'
+      },
+      {
+        var: 'PLT_LLAMA2_MODEL',
+        label: 'Where is the llama2 model located?',
+        default: '',
+        type: 'string'
       }
     ]
   }
@@ -102,7 +126,7 @@ class AiWarpGenerator extends ServiceGenerator {
       case 'llama2':
         config.aiProvider = {
           llama2: {
-            modelPath: this.config.aiModel
+            modelPath: `{${this.getEnvVarName('PLT_LLAMA2_MODEL')}}`
           }
         }
         break
