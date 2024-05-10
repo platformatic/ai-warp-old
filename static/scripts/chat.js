@@ -252,9 +252,7 @@ async function drawStreamedMessageContents (parent, message) {
     const lines = tokenString.split('\n')
 
     if (newLine) {
-      lines[0] = lines[0].replace(/^ +/g, (spaces) => {
-        return spaces.split('').map(() => '&nbsp;').join('')
-      })
+      lines[0] = addNonBreakingSpaces(lines[0])
       newLine = false
     }
 
@@ -264,13 +262,10 @@ async function drawStreamedMessageContents (parent, message) {
     current.scrollIntoView(false)
 
     for (let i = 1; i < lines.length; i++) {
-      // console.log(`line (newline=${newLine})`, JSON.stringify(lines[i]))
       current = document.createElement('p')
       parent.appendChild(current)
       current.scrollIntoView(false)
-      lines[i] = lines[i].replace(/^ +/g, (spaces) => {
-        return spaces.split('').map(() => '&nbsp;').join('')
-      })
+      lines[i] = addNonBreakingSpaces(lines[i])
       current.innerHTML += lines[i]
       newLine = true
     }
@@ -283,6 +278,16 @@ async function drawStreamedMessageContents (parent, message) {
   }
 
   promptLock = false
+}
+
+/**
+ * @param {string} message
+ * @returns {string}
+ */
+function addNonBreakingSpaces (str) {
+  return str.replace(/^ +/g, (spaces) => {
+    return spaces.split('').map(() => '&nbsp;').join('')
+  })
 }
 
 /**
