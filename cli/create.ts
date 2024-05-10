@@ -17,7 +17,8 @@ async function execute (): Promise<void> {
       tests: { type: 'boolean', default: true },
       typescript: { type: 'boolean', default: false },
       git: { type: 'boolean', default: false },
-      install: { type: 'boolean', default: true }
+      install: { type: 'boolean', default: true },
+      localSchema: { type: 'boolean', default: true }
     }
   })
 
@@ -30,7 +31,8 @@ async function execute (): Promise<void> {
     tests: args.values.tests,
     typescript: args.values.typescript,
     initGitRepository: args.values.git,
-    targetDirectory: args.values.dir
+    targetDirectory: args.values.dir,
+    localSchema: args.values.localSchema
   })
 
   await generator.run()

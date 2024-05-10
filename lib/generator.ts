@@ -51,27 +51,9 @@ class AiWarpGenerator extends ServiceGenerator {
         configValue: 'aiModel'
       },
       {
-        var: 'PLT_OPENAPI_API_KEY',
-        label: 'What is your OpenAI API key?',
-        default: '',
-        type: 'string'
-      },
-      {
-        var: 'PLT_MISTRAL_API_KEY',
-        label: 'What is your Mistral API key?',
-        default: '',
-        type: 'string'
-      },
-      {
-        var: 'PLT_AZURE_API_KEY',
-        label: 'What is your AZURE API key?',
-        default: '',
-        type: 'string'
-      },
-      {
-        var: 'PLT_LLAMA2_MODEL',
-        label: 'Where is the llama2 model located?',
-        default: '',
+        var: 'PLT_AI_API_KEY',
+        label: 'What is your OpenAI/Mistral/Azure API key?', 
+        default: 'sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
         type: 'string'
       }
     ]
@@ -81,7 +63,7 @@ class AiWarpGenerator extends ServiceGenerator {
     const baseConfig = await super._getConfigFileContents()
     const packageJson = await this.getStackablePackageJson()
     const config = {
-      $schema: './stackable.schema.json',
+      $schema: this.config.localSchema ? './stackable.schema.json' : `https://schemas.platformatic.dev/@platformatic/ai-warp/${packageJson.version}.json`,
       module: packageJson.name,
       aiProvider: {},
       promptDecorators: {
@@ -94,7 +76,7 @@ class AiWarpGenerator extends ServiceGenerator {
         config.aiProvider = {
           mistral: {
             model: this.config.aiModel,
-            apiKey: `{${this.getEnvVarName('PLT_MISTRAL_API_KEY')}}`
+            apiKey: `{${this.getEnvVarName('PLT_AI_API_KEY')}}`
           }
         }
         break
@@ -102,7 +84,7 @@ class AiWarpGenerator extends ServiceGenerator {
         config.aiProvider = {
           openai: {
             model: this.config.aiModel,
-            apiKey: `{${this.getEnvVarName('PLT_OPENAI_API_KEY')}}`
+            apiKey: `{${this.getEnvVarName('PLT_AI_API_KEY')}}`
           }
         }
         break
@@ -118,7 +100,7 @@ class AiWarpGenerator extends ServiceGenerator {
         config.aiProvider = {
           azure: {
             endpoint: 'https://myaccount.openai.azure.com/',
-            apiKey: `{${this.getEnvVarName('PLT_AZURE_API_KEY')}}`,
+            apiKey: `{${this.getEnvVarName('PLT_AI_API_KEY')}}`,
             deploymentName: this.config.aiModel
           }
         }
@@ -126,7 +108,7 @@ class AiWarpGenerator extends ServiceGenerator {
       case 'llama2':
         config.aiProvider = {
           llama2: {
-            modelPath: `{${this.getEnvVarName('PLT_LLAMA2_MODEL')}}`
+            modelPath: `{${this.getEnvVarName('PLT_AI_MODEL')}}`
           }
         }
         break
@@ -134,7 +116,7 @@ class AiWarpGenerator extends ServiceGenerator {
         config.aiProvider = {
           openai: {
             model: this.config.aiModel,
-            apiKey: `{${this.getEnvVarName('PLT_OPENAI_API_KEY')}}`
+            apiKey: `{${this.getEnvVarName('PLT_AI_API_KEY')}}`
           }
         }
     }
@@ -146,8 +128,7 @@ class AiWarpGenerator extends ServiceGenerator {
     await super._beforePrepare()
 
     this.addEnvVars({
-      PLT_OPENAI_API_KEY: this.config.openAiApiKey ?? 'sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
-      PLT_MISTRAL_API_KEY: this.config.mistralApiKey ?? 'sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+      PLT_AI_API_KEY: this.config.aiApiKey ?? 'sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
     }, { overwrite: false })
 
     const packageJson = await this.getStackablePackageJson()
@@ -169,11 +150,13 @@ class AiWarpGenerator extends ServiceGenerator {
       contents: generateGlobalTypesFile(packageJson.name)
     })
 
-    this.addFile({
-      path: '',
-      file: 'stackable.schema.json',
-      contents: JSON.stringify(schema, null, 2)
-    })
+    if (this.config.localSchema) {
+      this.addFile({
+        path: '',
+        file: 'stackable.schema.json',
+        contents: JSON.stringify(schema, null, 2)
+      })
+    }
 
     if (this.config.plugin !== undefined && this.config.plugin) {
       const plugins = generatePlugins(this.config.typescript ?? false)
