@@ -236,6 +236,7 @@ function drawCompletedResponseMessageContents (parent, message) {
 async function drawStreamedMessageContents (parent, message) {
   let fullResponse = ''
   let current = document.createElement('p')
+  let newLine = true
   parent.appendChild(current)
 
   const parser = new SSEParser(message.response[message.responseIndex])
@@ -250,12 +251,19 @@ async function drawStreamedMessageContents (parent, message) {
 
     const lines = tokenString.split('\n')
     for (let i = 0; i < lines.length; i++) {
+      if (newLine) {
+        lines[i] = lines[i].replace(/^ +/g, (spaces) => {
+          return spaces.split('').map(() => '&nbsp;').join('')
+        })
+        newLine = false
+      }
       current.innerHTML += lines[i]
 
       if (i + 1 < lines.length) {
         current = document.createElement('p')
         parent.appendChild(current)
         current.scrollIntoView()
+        newLine = true
       }
     }
   }
@@ -552,6 +560,15 @@ class SSEParser {
 }
 
 function escapeHtml (str) {
-  // eslint-disable-next-line no-undef
-  return new Option(str).innerHTML
+  return str.replace(
+    /[&<>'"]/g,
+    tag =>
+      ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        "'": '&#39;',
+        '"': '&quot;'
+      }[tag] || tag)
+  )
 }
