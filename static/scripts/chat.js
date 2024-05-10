@@ -236,7 +236,7 @@ function drawCompletedResponseMessageContents (parent, message) {
 async function drawStreamedMessageContents (parent, message) {
   let fullResponse = ''
   let current = document.createElement('p')
-  let newLine = true 
+  let newLine = true
   parent.appendChild(current)
 
   const parser = new SSEParser(message.response[message.responseIndex])
@@ -248,7 +248,7 @@ async function drawStreamedMessageContents (parent, message) {
 
     const tokenString = escapeHtml(tokens.join(''))
     fullResponse += tokenString
-    
+
     const lines = tokenString.split('\n')
 
     if (newLine) {
