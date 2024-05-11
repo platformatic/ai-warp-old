@@ -1,6 +1,6 @@
 import { ReadableStream, UnderlyingByteSource, ReadableByteStreamController } from 'node:stream/web'
 import MistralClient, { ChatCompletionResponseChunk } from '@platformatic/mistral-client'
-import { AiProvider, NoContentError, StreamChunkCallback } from './provider.js'
+import { AiProvider, ChatHistory, NoContentError, StreamChunkCallback } from './provider.js'
 import { AiStreamEvent, encodeEvent } from './event.js'
 
 type MistralStreamResponse = AsyncGenerator<ChatCompletionResponseChunk, void, unknown>
@@ -66,10 +66,11 @@ export class MistralProvider implements AiProvider {
     this.client = new MistralClient(apiKey)
   }
 
-  async ask (prompt: string): Promise<string> {
+  async ask (prompt: string, chatHistory?: ChatHistory): Promise<string> {
     const response = await this.client.chat({
       model: this.model,
       messages: [
+        ...this.chatHistoryToMessages(chatHistory),
         { role: 'user', content: prompt }
       ]
     })
@@ -81,13 +82,28 @@ export class MistralProvider implements AiProvider {
     return response.choices[0].message.content
   }
 
-  async askStream (prompt: string, chunkCallback?: StreamChunkCallback): Promise<ReadableStream> {
+  async askStream (prompt: string, chunkCallback?: StreamChunkCallback, chatHistory?: ChatHistory): Promise<ReadableStream> {
     const response = this.client.chatStream({
       model: this.model,
       messages: [
+        ...this.chatHistoryToMessages(chatHistory),
         { role: 'user', content: prompt }
       ]
     })
     return new ReadableStream(new MistralByteSource(response, chunkCallback))
+  }
+
+  private chatHistoryToMessages (chatHistory?: ChatHistory): Array<{ role: string, content: string }> {
+    if (chatHistory === undefined) {
+      return []
+    }
+
+    const messages: Array<{ role: string, content: string }> = []
+    for (const previousInteraction of chatHistory) {
+      messages.push({ role: 'user', content: previousInteraction.prompt })
+      messages.push({ role: 'assistant', content: previousInteraction.response })
+    }
+
+    return messages
   }
 }

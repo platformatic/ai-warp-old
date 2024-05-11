@@ -37,21 +37,21 @@ export default fastifyPlugin(async (fastify) => {
   const provider = await build(config.aiProvider, fastify.log)
 
   fastify.decorate('ai', {
-    warp: async (request, prompt) => {
+    warp: async (request, prompt, chatHistory) => {
       let decoratedPrompt = prompt
       if (config.promptDecorators !== undefined) {
         const { prefix, suffix } = config.promptDecorators
         decoratedPrompt = (prefix ?? '') + decoratedPrompt + (suffix ?? '')
       }
 
-      let response = await provider.ask(decoratedPrompt)
+      let response = await provider.ask(decoratedPrompt, chatHistory)
       if (fastify.ai.preResponseCallback !== undefined) {
         response = await fastify.ai.preResponseCallback(request, response) ?? response
       }
 
       return response
     },
-    warpStream: async (request, prompt) => {
+    warpStream: async (request, prompt, chatHistory) => {
       let decoratedPrompt = prompt
       if (config.promptDecorators !== undefined) {
         const { prefix, suffix } = config.promptDecorators
@@ -68,7 +68,7 @@ export default fastifyPlugin(async (fastify) => {
         }
       }
 
-      const response = await provider.askStream(decoratedPrompt, chunkCallback)
+      const response = await provider.askStream(decoratedPrompt, chunkCallback, chatHistory)
       return response
     },
     rateLimiting: {}

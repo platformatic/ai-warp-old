@@ -16,7 +16,11 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
     method: 'POST',
     schema: {
       body: Type.Object({
-        prompt: Type.String()
+        prompt: Type.String(),
+        chatHistory: Type.Optional(Type.Array(Type.Object({
+          prompt: Type.String(),
+          response: Type.String()
+        })))
       }),
       response: {
         200: Type.Object({
