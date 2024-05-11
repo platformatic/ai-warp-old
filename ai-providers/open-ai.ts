@@ -1,9 +1,9 @@
 import { ReadableStream, UnderlyingByteSource, ReadableByteStreamController } from 'node:stream/web'
 import OpenAI from 'openai'
-import { AiProvider, NoContentError, StreamChunkCallback } from './provider.js'
+import { AiProvider, ChatHistory, NoContentError, StreamChunkCallback } from './provider.js'
 import { ReadableStream as ReadableStreamPolyfill } from 'web-streams-polyfill'
 import { fetch } from 'undici'
-import { ChatCompletionChunk } from 'openai/resources/index'
+import { ChatCompletionChunk, ChatCompletionMessageParam } from 'openai/resources/index'
 import { AiStreamEvent, encodeEvent } from './event.js'
 import createError from '@fastify/error'
 
@@ -96,10 +96,11 @@ export class OpenAiProvider implements AiProvider {
     this.client = new OpenAI({ apiKey, fetch })
   }
 
-  async ask (prompt: string): Promise<string> {
+  async ask (prompt: string, chatHistory?: ChatHistory): Promise<string> {
     const response = await this.client.chat.completions.create({
       model: this.model,
       messages: [
+        ...this.chatHistoryToMessages(chatHistory),
         { role: 'user', content: prompt }
       ],
       stream: false
@@ -117,14 +118,29 @@ export class OpenAiProvider implements AiProvider {
     return content
   }
 
-  async askStream (prompt: string, chunkCallback?: StreamChunkCallback): Promise<ReadableStream> {
+  async askStream (prompt: string, chunkCallback?: StreamChunkCallback, chatHistory?: ChatHistory): Promise<ReadableStream> {
     const response = await this.client.chat.completions.create({
       model: this.model,
       messages: [
+        ...this.chatHistoryToMessages(chatHistory),
         { role: 'user', content: prompt }
       ],
       stream: true
     })
     return new ReadableStream(new OpenAiByteSource(response.toReadableStream() as ReadableStreamPolyfill, chunkCallback))
+  }
+
+  private chatHistoryToMessages (chatHistory?: ChatHistory): ChatCompletionMessageParam[] {
+    if (chatHistory === undefined) {
+      return []
+    }
+
+    const messages: ChatCompletionMessageParam[] = []
+    for (const previousInteraction of chatHistory) {
+      messages.push({ role: 'user', content: previousInteraction.prompt })
+      messages.push({ role: 'assistant', content: previousInteraction.response })
+    }
+
+    return messages
   }
 }

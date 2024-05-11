@@ -6,7 +6,7 @@ import {
   LlamaContext,
   LlamaModel
 } from 'node-llama-cpp'
-import { AiProvider, StreamChunkCallback } from './provider.js'
+import { AiProvider, ChatHistory, StreamChunkCallback } from './provider.js'
 import { AiStreamEvent, encodeEvent } from './event.js'
 
 interface ChunkQueueNode {
@@ -174,15 +174,21 @@ export class Llama2Provider implements AiProvider {
     this.logger = logger
   }
 
-  async ask (prompt: string): Promise<string> {
-    const session = new LlamaChatSession({ context: this.context })
+  async ask (prompt: string, chatHistory?: ChatHistory): Promise<string> {
+    const session = new LlamaChatSession({
+      context: this.context,
+      conversationHistory: chatHistory
+    })
     const response = await session.prompt(prompt)
 
     return response
   }
 
-  async askStream (prompt: string, chunkCallback?: StreamChunkCallback): Promise<ReadableStream> {
-    const session = new LlamaChatSession({ context: this.context })
+  async askStream (prompt: string, chunkCallback?: StreamChunkCallback, chatHistory?: ChatHistory): Promise<ReadableStream> {
+    const session = new LlamaChatSession({
+      context: this.context,
+      conversationHistory: chatHistory
+    })
 
     return new ReadableStream(new Llama2ByteSource(session, prompt, this.logger, chunkCallback))
   }

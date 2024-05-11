@@ -66,8 +66,10 @@ async function promptAiWarp (message) {
       headers: {
         'content-type': 'application/json'
       },
-      // TODO chat history
-      body: JSON.stringify({ prompt: message.prompt })
+      body: JSON.stringify({
+        prompt: message.prompt,
+        chatHistory: messages
+      })
     })
     if (res.status !== 200) {
       const { message, code } = await res.json()

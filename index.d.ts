@@ -3,6 +3,11 @@ import { PlatformaticApp } from '@platformatic/service'
 import { errorResponseBuilderContext } from '@fastify/rate-limit'
 import { AiWarpConfig } from './config.js'
 
+type ChatHistory = Array<{
+  prompt: string
+  response: string
+}>
+
 declare module 'fastify' {
   interface FastifyInstance {
     platformatic: PlatformaticApp<AiWarpConfig>
@@ -10,12 +15,12 @@ declare module 'fastify' {
       /**
        * Send a prompt to the AI provider and receive the full response.
        */
-      warp: (request: FastifyRequest, prompt: string) => Promise<string>
+      warp: (request: FastifyRequest, prompt: string, chatHistory?: ChatHistory) => Promise<string>
 
       /**
        * Send a prompt to the AI provider and receive a streamed response.
        */
-      warpStream: (request: FastifyRequest, prompt: string) => Promise<ReadableStream>
+      warpStream: (request: FastifyRequest, prompt: string, chatHistory?: ChatHistory) => Promise<ReadableStream>
 
       /**
        * A function to be called before warp() returns it's result. It can

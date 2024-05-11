@@ -1,7 +1,7 @@
 import { ReadableStream, ReadableByteStreamController, UnderlyingByteSource } from 'stream/web'
-import { AiProvider, NoContentError, StreamChunkCallback } from './provider.js'
+import { AiProvider, ChatHistory, NoContentError, StreamChunkCallback } from './provider.js'
 import { AiStreamEvent, encodeEvent } from './event.js'
-import { AzureKeyCredential, ChatCompletions, EventStream, OpenAIClient } from '@azure/openai'
+import { AzureKeyCredential, ChatCompletions, ChatRequestMessageUnion, EventStream, OpenAIClient } from '@azure/openai'
 
 type AzureStreamResponse = EventStream<ChatCompletions>
 
@@ -95,8 +95,9 @@ export class AzureProvider implements AiProvider {
     )
   }
 
-  async ask (prompt: string): Promise<string> {
+  async ask (prompt: string, chatHistory?: ChatHistory): Promise<string> {
     const { choices } = await this.client.getChatCompletions(this.deploymentName, [
+      ...this.chatHistoryToMessages(chatHistory),
       { role: 'user', content: prompt }
     ])
 
@@ -112,11 +113,26 @@ export class AzureProvider implements AiProvider {
     return message.content
   }
 
-  async askStream (prompt: string, chunkCallback?: StreamChunkCallback | undefined): Promise<ReadableStream> {
+  async askStream (prompt: string, chunkCallback?: StreamChunkCallback, chatHistory?: ChatHistory): Promise<ReadableStream> {
     const response = await this.client.streamChatCompletions(this.deploymentName, [
+      ...this.chatHistoryToMessages(chatHistory),
       { role: 'user', content: prompt }
     ])
 
     return new ReadableStream(new AzureByteSource(response, chunkCallback))
+  }
+
+  private chatHistoryToMessages (chatHistory?: ChatHistory): ChatRequestMessageUnion[] {
+    if (chatHistory === undefined) {
+      return []
+    }
+
+    const messages: ChatRequestMessageUnion[] = []
+    for (const previousInteraction of chatHistory) {
+      messages.push({ role: 'user', content: previousInteraction.prompt })
+      messages.push({ role: 'assistant', content: previousInteraction.response })
+    }
+
+    return messages
   }
 }
