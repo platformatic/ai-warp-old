@@ -60,6 +60,25 @@ async function handlePrompt (prompt) {
 async function promptAiWarp (message) {
   promptLock = true
 
+  let chatHistoryStartIndex
+  if (messages.length >= 11) {
+    chatHistoryStartIndex = messages.length - 12
+  } else {
+    chatHistoryStartIndex = 0
+  }
+
+  // Only send the previous 10 messages to abide by token limits. We also
+  //  don't want to sent the latest message, since that's the one we're getting
+  //  the response to
+  const chatHistory = []
+  for (let i = chatHistoryStartIndex; i < messages.length - 1; i++) {
+    const previousMessage = messages[i]
+    chatHistory.push({
+      prompt: previousMessage.prompt,
+      response: previousMessage.response[previousMessage.responseIndex]
+    })
+  }
+
   try {
     const res = await fetch('/api/v1/stream', {
       method: 'POST',
@@ -68,7 +87,7 @@ async function promptAiWarp (message) {
       },
       body: JSON.stringify({
         prompt: message.prompt,
-        chatHistory: messages
+        chatHistory
       })
     })
     if (res.status !== 200) {
