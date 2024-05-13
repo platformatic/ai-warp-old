@@ -1,9 +1,14 @@
+import { join } from 'node:path'
+import { readFileSync } from 'node:fs'
 import { schema } from '@platformatic/service'
+
+const { version } = JSON.parse(readFileSync(join(import.meta.dirname, '..', '..', 'package.json'), 'utf-8'))
 
 const aiWarpSchema = {
   ...schema.schema,
   $id: 'ai-warp',
   title: 'Ai Warp Config',
+  version,
   properties: {
     ...schema.schema.properties,
     module: { type: 'string' },

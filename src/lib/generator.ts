@@ -13,21 +13,19 @@ interface PackageJson {
   devDependencies: Record<string, string>
 }
 
+const dir = import.meta.dirname || dirname(fileURLToPath(import.meta.url))
+const aiWarpPackageJsonPath = join(dir, '..', '..', 'package.json')
+
 class AiWarpGenerator extends ServiceGenerator {
   private _packageJson: PackageJson | null = null
 
   getDefaultConfig (): { [x: string]: BaseGenerator.JSONValue } {
     const defaultBaseConfig = super.getDefaultConfig()
     // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions
-    const dir = import.meta.dirname || dirname(fileURLToPath(import.meta.url))
     const defaultConfig = {
       aiProvider: 'openai',
       aiModel: 'gpt-3.5-turbo',
       localSchema: false,
-      // TODO: temporary fix, when running the typescript files directly
-      //  (in tests) this goes a directory above the actual project. Exposing
-      //  temporarily until I come up with something better
-      aiWarpPackageJsonPath: join(dir, '..', '..', 'package.json')
     }
     return Object.assign({}, defaultBaseConfig, defaultConfig)
   }
@@ -175,8 +173,7 @@ class AiWarpGenerator extends ServiceGenerator {
 
   async getStackablePackageJson (): Promise<PackageJson> {
     if (this._packageJson == null) {
-      const packageJsonPath = this.config.aiWarpPackageJsonPath
-      const packageJsonFile = await readFile(packageJsonPath, 'utf8')
+      const packageJsonFile = await readFile(aiWarpPackageJsonPath, 'utf8')
       const packageJson: Partial<PackageJson> = JSON.parse(packageJsonFile)
 
       if (packageJson.name === undefined || packageJson.name === null) {

@@ -10,8 +10,8 @@
   "scripts": {
     "create": "node ./dist/cli/create.js",
     "start": "node ./dist/cli/start.js -c ./ai-warp-app/platformatic.json",
-    "build": "tsc --build && cp -r ./static ./dist/ && cp config.d.ts dist/",
-    "build:config": "npm run build && node ./dist/lib/schema.js --dump-schema  > schema.json && json2ts > config.d.ts < schema.json",
+    "build": "tsc --build && cp -r ./static ./dist/ && cp src/config.d.ts dist/",
+    "build:config": "npm run build && node ./dist/lib/schema.js --dump-schema  > schema.json && json2ts > src/config.d.ts < schema.json",
     "prepare": "npm run build:config",
     "clean": "rm -fr ./dist",
     "lint": "ts-standard | snazzy",
@@ -19,8 +19,8 @@
     "lint-md": "markdownlint-cli2 .",
     "lint-md:fix": "markdownlint-cli2 --fix .",
     "test": "npm run test:unit && npm run test:e2e && npm run test:types",
-    "test:unit": "node --test --test-reporter=@reporters/github --test-reporter-destination=stdout --test-reporter=spec --test-reporter-destination=stdout --import=tsx --test-concurrency=1 ./tests/unit/*",
-    "test:e2e": "node --test --test-reporter=@reporters/github --test-reporter-destination=stdout --test-reporter=spec --test-reporter-destination=stdout --import=tsx --test-concurrency=1 ./tests/e2e/*",
+    "test:unit": "node --test --test-reporter=@reporters/github --test-reporter-destination=stdout --test-reporter=spec --test-reporter-destination=stdout --import=tsx --test-concurrency=1 ./src/tests/unit/*",
+    "test:e2e": "node --test --test-reporter=@reporters/github --test-reporter-destination=stdout --test-reporter=spec --test-reporter-destination=stdout --import=tsx --test-concurrency=1 ./src/tests/e2e/*",
     "test:types": "tsd"
   },
   "engines": {
