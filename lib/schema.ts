@@ -1,9 +1,21 @@
+import { readFileSync } from 'node:fs'
+import { join } from 'node:path'
 import { schema } from '@platformatic/service'
+
+let pkgJsonPath: string
+if (import.meta.url.endsWith('.js')) {
+  pkgJsonPath = join(import.meta.dirname, '..', '..', 'package.json')
+} else {
+  pkgJsonPath = join(import.meta.dirname, '..', 'package.json')
+}
+
+const pkgJson: any = JSON.parse(readFileSync(pkgJsonPath, 'utf8'))
 
 const aiWarpSchema = {
   ...schema.schema,
   $id: 'ai-warp',
   title: 'Ai Warp Config',
+  version: pkgJson.version,
   properties: {
     ...schema.schema.properties,
     module: { type: 'string' },

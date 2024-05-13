@@ -19,7 +19,7 @@
     "lint-md": "markdownlint-cli2 .",
     "lint-md:fix": "markdownlint-cli2 --fix .",
     "test": "npm run test:unit && npm run test:e2e && npm run test:types",
-    "test:unit": "node --test --test-reporter=@reporters/github --test-reporter-destination=stdout --test-reporter=spec --test-reporter-destination=stdout --import=tsx --test-concurrency=1 ./tests/unit/*",
+    "test:unit": "npm run build && node --test --test-reporter=@reporters/github --test-reporter-destination=stdout --test-reporter=spec --test-reporter-destination=stdout --import=tsx --test-concurrency=1 ./tests/unit/*",
     "test:e2e": "node --test --test-reporter=@reporters/github --test-reporter-destination=stdout --test-reporter=spec --test-reporter-destination=stdout --import=tsx --test-concurrency=1 ./tests/e2e/*",
     "test:types": "tsd"
   },
