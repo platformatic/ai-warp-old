@@ -22,6 +22,28 @@ const stackable: Stackable<AiWarpConfig> = async function (fastify, opts) {
     })
   }
 
+  if (config.service === undefined) {
+    config.service = {}
+  }
+
+  const currentOpenApiConfig = typeof config.service.openapi === 'object' ? config.service.openapi : {}
+  if (config.auth?.jwt !== undefined) {
+    config.service.openapi = {
+      ...currentOpenApiConfig,
+      components: {
+        ...currentOpenApiConfig.components,
+        securitySchemes: {
+          ...currentOpenApiConfig.components?.securitySchemes,
+          aiWarpJwtToken: {
+            type: 'apiKey',
+            in: 'header',
+            name: 'Authorization'
+          }
+        }
+      }
+    }
+  }
+
   await fastify.register(platformaticService, opts)
 
   await fastify.register(warpPlugin, opts) // needs to be registered here for fastify.ai to be decorated

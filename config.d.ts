@@ -217,13 +217,9 @@ export interface AiWarpConfig {
         prefix?: string;
         path?: string;
       };
-      plugins?:
-        | {
-            [k: string]: unknown;
-          }
-        | {
-            [k: string]: unknown;
-          };
+      plugins?: {
+        [k: string]: unknown;
+      };
     }[];
   };
   module?: string;

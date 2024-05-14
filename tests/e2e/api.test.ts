@@ -197,6 +197,47 @@ it('provides all paths in OpenAPI', async () => {
   await app.close()
 })
 
+it('provides header for jwt token in OpenAPI', async () => {
+  const [app, port] = await buildAiWarpApp({
+    aiProvider: {
+      openai: {
+        model: 'gpt-3.5-turbo',
+        apiKey: ''
+      }
+    },
+    auth: {
+      jwt: {
+        secret: 'asd'
+      }
+    }
+  })
+
+  await app.start()
+
+  const res = await fetch(`http://localhost:${port}/documentation/json`)
+  const body = await res.json()
+
+  assert.deepStrictEqual(body.components, {
+    securitySchemes: {
+      aiWarpJwtToken: {
+        type: 'apiKey',
+        in: 'header',
+        name: 'Authorization'
+      }
+    },
+    schemas: {}
+  })
+
+  const endpoints = ['/api/v1/prompt', '/api/v1/stream']
+  for (const endpoint of endpoints) {
+    assert.deepStrictEqual(body.paths[endpoint].post.security, [
+      { aiWarpJwtToken: [] }
+    ])
+  }
+
+  await app.close()
+})
+
 it('prompt with wrong JSON', async () => {
   const [app, port] = await buildAiWarpApp({
     aiProvider: {

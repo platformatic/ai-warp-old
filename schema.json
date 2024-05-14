@@ -1,6 +1,6 @@
 {
   "$id": "ai-warp",
-  "version": "1.37.1",
+  "version": "1.39.0",
   "title": "Ai Warp Config",
   "type": "object",
   "properties": {

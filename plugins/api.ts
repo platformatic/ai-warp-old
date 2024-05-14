@@ -11,10 +11,16 @@ function isAFastifyError (object: object): object is FastifyError {
 const InternalServerError = createError('INTERNAL_SERVER_ERROR', 'Internal Server Error', 500)
 
 const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
+  let security: Array<Record<string, string[]>> | undefined
+  if (fastify.platformatic.config.auth?.jwt !== undefined) {
+    security = [{ aiWarpJwtToken: [] }]
+  }
+
   fastify.route({
     url: '/api/v1/prompt',
     method: 'POST',
     schema: {
+      security,
       body: Type.Object({
         prompt: Type.String(),
         chatHistory: Type.Optional(Type.Array(Type.Object({
@@ -55,6 +61,7 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
     method: 'POST',
     schema: {
       produces: ['text/event-stream'],
+      security,
       body: Type.Object({
         prompt: Type.String(),
         chatHistory: Type.Optional(Type.Array(Type.Object({
