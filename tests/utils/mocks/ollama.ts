@@ -1,6 +1,13 @@
 import { MOCK_AGENT, MOCK_CONTENT_RESPONSE, MOCK_STREAMING_CONTENT_CHUNKS, establishMockAgent } from './base.js'
 
 export const OLLAMA_MOCK_HOST = 'http://127.0.0.1:41434'
+
+export let chatHistoryProvided = false
+
+export function resetOllamaMock (): void {
+  chatHistoryProvided = false
+}
+
 let isOllamaMocked = false
 
 /**
@@ -25,6 +32,9 @@ export function mockOllama (): void {
     }
 
     const body = JSON.parse(opts.body)
+    if (body.messages.length > 1) {
+      chatHistoryProvided = true
+    }
 
     let response = ''
     if (body.stream === true) {

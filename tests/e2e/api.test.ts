@@ -5,10 +5,12 @@ import { FastifyInstance } from 'fastify'
 import fastifyPlugin from 'fastify-plugin'
 import { AiWarpConfig } from '../../config.js'
 import { buildAiWarpApp } from '../utils/stackable.js'
-import { AZURE_DEPLOYMENT_NAME, AZURE_MOCK_HOST } from '../utils/mocks/azure.js'
+import { AZURE_DEPLOYMENT_NAME, AZURE_MOCK_HOST, chatHistoryProvided as azureChatHistoryProvided, resetAzureMock } from '../utils/mocks/azure.js'
 import { MOCK_CONTENT_RESPONSE, buildExpectedStreamBodyString } from '../utils/mocks/base.js'
-import { OLLAMA_MOCK_HOST } from '../utils/mocks/ollama.js'
+import { OLLAMA_MOCK_HOST, chatHistoryProvided as ollamaChatHistoryProvided, resetOllamaMock } from '../utils/mocks/ollama.js'
 import { mockAllProviders } from '../utils/mocks/index.js'
+import { chatHistoryProvided as openAiChatHistoryProvided, resetOpenAiMock } from '../utils/mocks/open-ai.js'
+import { chatHistoryProvided as mistralChatHistoryProvided, resetMistralMock } from '../utils/mocks/mistral.js'
 mockAllProviders()
 
 const expectedStreamBody = buildExpectedStreamBodyString()
@@ -135,6 +137,156 @@ for (const { name, config } of providers) {
     })
   })
 }
+
+it('OpenAI /api/v1/prompt works with chat history', async () => {
+  resetOpenAiMock()
+
+  const [app, port] = await buildAiWarpApp({
+    aiProvider: {
+      openai: {
+        model: 'gpt-3.5-turbo',
+        apiKey: ''
+      }
+    }
+  })
+
+  await app.start()
+  try {
+    const res = await fetch(`http://localhost:${port}/api/v1/prompt`, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        prompt: 'asd',
+        chatHistory: [
+          {
+            prompt: '',
+            response: ''
+          }
+        ]
+      })
+    })
+    assert.strictEqual(res.status, 200)
+
+    assert.strictEqual(openAiChatHistoryProvided, true)
+  } finally {
+    app.close()
+  }
+})
+
+it('Mistral /api/v1/prompt works with chat history', async () => {
+  resetMistralMock()
+
+  const [app, port] = await buildAiWarpApp({
+    aiProvider: {
+      mistral: {
+        model: 'mistral-small-latest',
+        apiKey: ''
+      }
+    }
+  })
+
+  await app.start()
+  try {
+    const res = await fetch(`http://localhost:${port}/api/v1/prompt`, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        prompt: 'asd',
+        chatHistory: [
+          {
+            prompt: '',
+            response: ''
+          }
+        ]
+      })
+    })
+    assert.strictEqual(res.status, 200)
+
+    assert.strictEqual(mistralChatHistoryProvided, true)
+  } finally {
+    app.close()
+  }
+})
+
+it('Ollama /api/v1/prompt works with chat history', async () => {
+  resetOllamaMock()
+
+  const [app, port] = await buildAiWarpApp({
+    aiProvider: {
+      ollama: {
+        host: OLLAMA_MOCK_HOST,
+        model: 'some-model'
+      }
+    }
+  })
+
+  await app.start()
+  try {
+    const res = await fetch(`http://localhost:${port}/api/v1/prompt`, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        prompt: 'asd',
+        chatHistory: [
+          {
+            prompt: '',
+            response: ''
+          }
+        ]
+      })
+    })
+    assert.strictEqual(res.status, 200)
+
+    assert.strictEqual(ollamaChatHistoryProvided, true)
+  } finally {
+    app.close()
+  }
+})
+
+it('Azure /api/v1/prompt works with chat history', async () => {
+  resetAzureMock()
+
+  const [app, port] = await buildAiWarpApp({
+    aiProvider: {
+      azure: {
+        endpoint: AZURE_MOCK_HOST,
+        apiKey: 'asd',
+        deploymentName: AZURE_DEPLOYMENT_NAME,
+        allowInsecureConnections: true
+      }
+    }
+  })
+
+  await app.start()
+  try {
+    const res = await fetch(`http://localhost:${port}/api/v1/prompt`, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json'
+      },
+      body: JSON.stringify({
+        prompt: 'asd',
+        chatHistory: [
+          {
+            prompt: '',
+            response: ''
+          }
+        ]
+      })
+    })
+    assert.strictEqual(res.status, 200)
+
+    assert.strictEqual(azureChatHistoryProvided, true)
+  } finally {
+    app.close()
+  }
+})
 
 it('calls the preResponseCallback', async () => {
   const [app, port] = await buildAiWarpApp({

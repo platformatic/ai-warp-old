@@ -1,5 +1,11 @@
 import { MOCK_AGENT, MOCK_CONTENT_RESPONSE, MOCK_STREAMING_CONTENT_CHUNKS, establishMockAgent } from './base.js'
 
+export let chatHistoryProvided = false
+
+export function resetOpenAiMock (): void {
+  chatHistoryProvided = false
+}
+
 let isOpenAiMocked = false
 
 /**
@@ -25,6 +31,9 @@ export function mockOpenAiApi (): void {
     }
 
     const body = JSON.parse(opts.body)
+    if (body.messages.length > 1) {
+      chatHistoryProvided = true
+    }
 
     let response = ''
     if (body.stream === true) {
