@@ -34,8 +34,8 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
     },
     handler: async (request) => {
       try {
-        const { prompt } = request.body
-        const response = await fastify.ai.warp(request, prompt)
+        const { prompt, chatHistory } = request.body
+        const response = await fastify.ai.warp(request, prompt, chatHistory)
 
         return { response }
       } catch (exception) {
@@ -65,9 +65,9 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
     },
     handler: async (request, reply) => {
       try {
-        const { prompt } = request.body
+        const { prompt, chatHistory } = request.body
 
-        const response = await fastify.ai.warpStream(request, prompt)
+        const response = await fastify.ai.warpStream(request, prompt, chatHistory)
         // eslint-disable-next-line @typescript-eslint/no-floating-promises
         reply.header('content-type', 'text/event-stream')
 

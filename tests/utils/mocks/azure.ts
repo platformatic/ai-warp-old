@@ -5,6 +5,12 @@ export const AZURE_MOCK_HOST = 'http://127.0.0.1:41435'
 
 export const AZURE_DEPLOYMENT_NAME = 'some-deployment'
 
+export let chatHistoryProvided = false
+
+export function resetAzureMock (): void {
+  chatHistoryProvided = false
+}
+
 /**
  * @see https://learn.microsoft.com/en-us/azure/ai-services/openai/reference#chat-completions
  */
@@ -23,7 +29,11 @@ export function mockAzure (): Server {
       bodyString += chunk
     })
     req.on('end', () => {
-      const body: { stream: boolean } = JSON.parse(bodyString)
+      const body: { stream: boolean, messages: unknown[] } = JSON.parse(bodyString)
+
+      if (body.messages.length > 1) {
+        chatHistoryProvided = true
+      }
 
       if (body.stream) {
         res.setHeader('content-type', 'text/event-stream')
