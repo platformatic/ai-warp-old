@@ -1,25 +1,33 @@
 #main-illustration {
-    margin-top: 60px;
+    margin-top: 16px;
     width: 100%;
     text-align: center;
     position: absolute;
 }
 
+#main-illustration img {
+    width: 957px;
+}
+
 #greeting {
-    padding-top: 450px;
+    padding-top: 270px;
     text-align: center;
+    line-height: 2.7rem;
+}
+
+#greeting-top-text {
+    color: rgba(255, 255, 255, 0.7);
 }
 
 #prompt-suggestions {
     width: 50%;
     margin-left: 25%;
-    padding-top: 100px;
     display: flex;
 }
 
 .prompt-suggestion-column {
     width: 100%;
-    margin-right: 12px;
+    margin-right: 8px;
     display: flex;
     flex-direction: column;
     align-content: right;
@@ -54,7 +62,7 @@
 #custom-prompt {
     width: 50%;
     margin-left: 25%;
-    margin-top: 50px;
+    margin-top: 20px;
     display: flex;
     justify-content: center;
 }
