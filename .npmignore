@@ -10,3 +10,4 @@ tsconfig.json
 ai-warp-app*
 *gguf
 /index.*
+dist/tsconfig.tsbuildinfo
