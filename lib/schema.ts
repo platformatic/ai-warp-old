@@ -1,12 +1,13 @@
 import { readFileSync } from 'node:fs'
-import { join } from 'node:path'
+import { join, dirname } from 'node:path'
 import { schema } from '@platformatic/service'
+import { fileURLToPath } from 'node:url'
 
 let pkgJsonPath: string
 if (import.meta.url.endsWith('.js')) {
-  pkgJsonPath = join(import.meta.dirname, '..', '..', 'package.json')
+  pkgJsonPath = join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'package.json')
 } else {
-  pkgJsonPath = join(import.meta.dirname, '..', 'package.json')
+  pkgJsonPath = join(dirname(fileURLToPath(import.meta.url)), '..', 'package.json')
 }
 
 const pkgJson: any = JSON.parse(readFileSync(pkgJsonPath, 'utf8'))
