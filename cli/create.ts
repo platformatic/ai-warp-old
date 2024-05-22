@@ -13,27 +13,27 @@ async function execute (): Promise<void> {
       },
       port: { type: 'string', default: '3042' },
       hostname: { type: 'string', default: '0.0.0.0' },
-      plugin: { type: 'boolean', default: true },
-      tests: { type: 'boolean', default: true },
-      typescript: { type: 'boolean', default: false },
-      git: { type: 'boolean', default: false },
-      install: { type: 'boolean', default: true },
-      localSchema: { type: 'boolean', default: true }
+      plugin: { type: 'boolean' },
+      tests: { type: 'boolean' },
+      typescript: { type: 'boolean' },
+      git: { type: 'boolean' },
+      localSchema: { type: 'boolean' }
     }
   })
 
   const generator = new Generator()
 
-  generator.setConfig({
+  const config = {
     port: parseInt(args.values.port as string),
     hostname: args.values.hostname,
     plugin: args.values.plugin,
     tests: args.values.tests,
     typescript: args.values.typescript,
     initGitRepository: args.values.git,
-    targetDirectory: args.values.dir,
-    localSchema: args.values.localSchema
-  })
+    targetDirectory: args.values.dir
+  }
+
+  generator.setConfig(config)
 
   await generator.run()
 
