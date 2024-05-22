@@ -24,6 +24,8 @@ class AiWarpGenerator extends ServiceGenerator {
       aiProvider: 'openai',
       aiModel: 'gpt-3.5-turbo',
       localSchema: false,
+      plugin: false,
+      tests: false,
       // TODO: temporary fix, when running the typescript files directly
       //  (in tests) this goes a directory above the actual project. Exposing
       //  temporarily until I come up with something better
