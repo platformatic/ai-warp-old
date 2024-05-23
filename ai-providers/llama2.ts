@@ -165,18 +165,18 @@ interface Llama2ProviderCtorOptions {
 }
 
 export class Llama2Provider implements AiProvider {
-  context: LlamaContext
+  model: LlamaModel
   logger: FastifyLoggerInstance
 
   constructor ({ modelPath, logger }: Llama2ProviderCtorOptions) {
-    const model = new LlamaModel({ modelPath })
-    this.context = new LlamaContext({ model })
+    this.model = new LlamaModel({ modelPath })
     this.logger = logger
   }
 
   async ask (prompt: string, chatHistory?: ChatHistory): Promise<string> {
+    const context = new LlamaContext({ model: this.model })
     const session = new LlamaChatSession({
-      context: this.context,
+      context,
       conversationHistory: chatHistory
     })
     const response = await session.prompt(prompt)
@@ -185,8 +185,9 @@ export class Llama2Provider implements AiProvider {
   }
 
   async askStream (prompt: string, chunkCallback?: StreamChunkCallback, chatHistory?: ChatHistory): Promise<ReadableStream> {
+    const context = new LlamaContext({ model: this.model })
     const session = new LlamaChatSession({
-      context: this.context,
+      context,
       conversationHistory: chatHistory
     })
 
