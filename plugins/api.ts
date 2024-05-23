@@ -15,6 +15,7 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
     url: '/api/v1/prompt',
     method: 'POST',
     schema: {
+      operationId: 'prompt',
       body: Type.Object({
         prompt: Type.String(),
         chatHistory: Type.Optional(Type.Array(Type.Object({
@@ -54,6 +55,7 @@ const plugin: FastifyPluginAsyncTypebox = async (fastify) => {
     url: '/api/v1/stream',
     method: 'POST',
     schema: {
+      operationId: 'stream',
       produces: ['text/event-stream'],
       body: Type.Object({
         prompt: Type.String(),
