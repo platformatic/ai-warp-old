@@ -15,7 +15,7 @@ Configuring rate limiting can be done via your Platformatic config file under th
 }
 ```
 
-We utilize the [@fastify/rate-limit](https://github.com/fastify/rate-limit) module for rate limiting. You can
+We utilize the [@fastify/rate-limit](https://github.com/fastify/fastify-rate-limit) module for rate limiting. You can
 pass in any configuration options from it into the `rateLimiting` object.
 
 For defining the callbacks allowed by that module, set them in the `fastify.ai.rateLimiting` object.
