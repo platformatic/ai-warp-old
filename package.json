@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "@azure/openai": "^1.0.0-beta.12",
-    "@fastify/error": "^3.4.1",
+    "@fastify/error": "^4.0.0",
     "@fastify/rate-limit": "^9.1.0",
     "@fastify/static": "^7.0.3",
     "@fastify/type-provider-typebox": "^4.0.0",
