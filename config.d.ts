@@ -205,6 +205,9 @@ export interface AiWarpConfig {
     path?: string;
     schema?: string;
     url?: string;
+    fullResponse?: boolean;
+    fullRequest?: boolean;
+    validateResponse?: boolean;
   }[];
   versions?: {
     /**
