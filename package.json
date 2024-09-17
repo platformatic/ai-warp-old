@@ -42,7 +42,7 @@
     "@fastify/error": "^3.4.1",
     "@fastify/rate-limit": "^9.1.0",
     "@fastify/static": "^7.0.3",
-    "@fastify/type-provider-typebox": "^4.0.0",
+    "@fastify/type-provider-typebox": "^5.0.0",
     "@platformatic/config": "^1.37.0",
     "@platformatic/generators": "^1.37.0",
     "@platformatic/mistral-client": "^0.1.0",
