@@ -67,7 +67,7 @@ expectAssignable<AiWarpConfig>({
     hostname: '{PLT_SERVER_HOSTNAME}',
     port: '{PORT}',
     logger: {
-      level: '{PLT_SERVER_LOGGER_LEVEL}'
+      level: 'info'
     }
   },
   module: '@platformatic/ai-warp',

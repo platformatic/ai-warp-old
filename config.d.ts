@@ -31,7 +31,13 @@ export interface AiWarpConfig {
     logger?:
       | boolean
       | {
-          level?: string;
+          level: (
+            | ("fatal" | "error" | "warn" | "info" | "debug" | "trace" | "silent")
+            | {
+                [k: string]: unknown;
+              }
+          ) &
+            string;
           transport?:
             | {
                 target?: string;
@@ -61,6 +67,9 @@ export interface AiWarpConfig {
           };
           [k: string]: unknown;
         };
+    loggerInstance?: {
+      [k: string]: unknown;
+    };
     serializerOpts?: {
       schema?: {
         [k: string]: unknown;
@@ -80,7 +89,9 @@ export interface AiWarpConfig {
     requestIdLogLabel?: string;
     jsonShorthand?: boolean;
     trustProxy?: boolean | string | string[] | number;
+    http2?: boolean;
     https?: {
+      allowHTTP1?: boolean;
       key:
         | string
         | {
@@ -149,10 +160,12 @@ export interface AiWarpConfig {
         defaultMetrics?: {
           enabled: boolean;
         };
-        prefix?: string;
         auth?: {
           username: string;
           password: string;
+        };
+        labels?: {
+          [k: string]: string;
         };
       };
   telemetry?: OpenTelemetry;
@@ -168,6 +181,7 @@ export interface AiWarpConfig {
     | boolean
     | string;
   $schema?: string;
+  module?: string;
   service?: {
     openapi?:
       | {
@@ -205,24 +219,10 @@ export interface AiWarpConfig {
     path?: string;
     schema?: string;
     url?: string;
+    fullResponse?: boolean;
+    fullRequest?: boolean;
+    validateResponse?: boolean;
   }[];
-  versions?: {
-    /**
-     * The path to the directory containing the versions mappers
-     */
-    dir: string;
-    configs: {
-      version: string;
-      openapi?: {
-        prefix?: string;
-        path?: string;
-      };
-      plugins?: {
-        [k: string]: unknown;
-      };
-    }[];
-  };
-  module?: string;
   showAiWarpHomepage?: boolean;
   aiProvider:
     | {
