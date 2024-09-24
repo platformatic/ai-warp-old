@@ -50,7 +50,7 @@
     "esmock": "^2.6.5",
     "fast-json-stringify": "^6.0.0",
     "fastify-user": "^1.0.0",
-    "json-schema-to-typescript": "^14.0.0",
+    "json-schema-to-typescript": "^15.0.0",
     "ollama": "^0.5.0",
     "openai": "^4.28.4"
   },
