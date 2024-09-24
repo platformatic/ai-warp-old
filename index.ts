@@ -2,8 +2,8 @@ import { join } from 'node:path'
 import type { FastifyInstance } from 'fastify'
 import { app as platformaticService, Stackable, buildStackable as serviceBuildStackable } from '@platformatic/service'
 import { ConfigManager } from '@platformatic/config'
+import type { StackableInterface } from '@platformatic/config'
 import fastifyUser from 'fastify-user'
-import fastifyPlugin from 'fastify-plugin'
 import fastifyStatic from '@fastify/static'
 import { schema } from './lib/schema.js'
 import { Generator } from './lib/generator.js'
@@ -15,7 +15,7 @@ import rateLimitPlugin from './plugins/rate-limiting.js'
 
 export interface AiWarpMixin {
   platformatic: {
-    configManager: ConfigManager<AiWarpConfig>,
+    configManager: ConfigManager<AiWarpConfig>
     config: AiWarpConfig
   }
 }
@@ -44,8 +44,8 @@ const stackable: Stackable<AiWarpConfig, AiGenerator> = {
     await fastify.register(apiPlugin, opts)
   },
   configType: 'ai-warp-app',
-  schema: schema,
-  Generator: Generator,
+  schema,
+  Generator,
   configManagerConfig: {
     schema,
     envWhitelist: ['PORT', 'HOSTNAME'],
@@ -64,8 +64,9 @@ const stackable: Stackable<AiWarpConfig, AiGenerator> = {
 // @ts-expect-error
 stackable.app[Symbol.for('skip-override')] = true
 
-function buildStackable (opts: { config: string }) {
-  return serviceBuildStackable(opts, stackable.app)
+async function buildStackable (opts: { config: string }): Promise<StackableInterface> {
+  // eslint-disable-next-line
+  return await serviceBuildStackable(opts, stackable.app)
 }
 
 export default stackable

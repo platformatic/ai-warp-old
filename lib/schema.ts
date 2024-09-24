@@ -10,7 +10,7 @@ if (import.meta.url.endsWith('.js')) {
   pkgJsonPath = join(dirname(fileURLToPath(import.meta.url)), '..', 'package.json')
 }
 
-const pkgJson: any = JSON.parse(readFileSync(pkgJsonPath, 'utf8'))
+const pkgJson: { version: string } = JSON.parse(readFileSync(pkgJsonPath, 'utf8'))
 
 const aiWarpSchema = {
   ...schema.schema,
@@ -317,7 +317,7 @@ const aiWarpSchema = {
   required: [
     'aiProvider'
   ]
-} as any
+}
 
 export { aiWarpSchema as schema }
 
