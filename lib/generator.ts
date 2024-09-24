@@ -16,6 +16,13 @@ interface PackageJson {
 class AiWarpGenerator extends ServiceGenerator {
   private _packageJson: PackageJson | null = null
 
+  constructor (opts) {
+    super({
+      ...opts,
+      module: '@platformatic/ai-warp'
+    })
+  }
+
   getDefaultConfig (): { [x: string]: BaseGenerator.JSONValue } {
     const defaultBaseConfig = super.getDefaultConfig()
     // eslint-disable-next-line @typescript-eslint/strict-boolean-expressions

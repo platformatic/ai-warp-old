@@ -14,7 +14,7 @@ const pkgJson: any = JSON.parse(readFileSync(pkgJsonPath, 'utf8'))
 
 const aiWarpSchema = {
   ...schema.schema,
-  $id: 'ai-warp',
+  $id: `https://schemas.platformatic.com/@platformatic/ai-warp/${pkgJson.version}.json`,
   title: 'Ai Warp Config',
   version: pkgJson.version,
   properties: {
