@@ -66,8 +66,11 @@ stackable.app[Symbol.for('skip-override')] = true
 
 async function buildStackable (opts: { config: string }): Promise<StackableInterface> {
   // eslint-disable-next-line
-  return await serviceBuildStackable(opts, stackable.app)
+  return await serviceBuildStackable(opts, stackable)
 }
+
+// @ts-expect-error
+stackable.buildStackable = buildStackable
 
 export default stackable
 export { Generator, schema, buildStackable }

@@ -11,6 +11,8 @@ import { OLLAMA_MOCK_HOST, chatHistoryProvided as ollamaChatHistoryProvided, res
 import { mockAllProviders } from '../utils/mocks/index.js'
 import { chatHistoryProvided as openAiChatHistoryProvided, resetOpenAiMock } from '../utils/mocks/open-ai.js'
 import { chatHistoryProvided as mistralChatHistoryProvided, resetMistralMock } from '../utils/mocks/mistral.js'
+import { buildStackable } from '../../index.js'
+import stackable from '../../index.js'
 mockAllProviders()
 
 const expectedStreamBody = buildExpectedStreamBodyString()
@@ -380,4 +382,80 @@ it('prompt with wrong JSON', async () => {
   })
 
   await app.close()
+})
+
+it('buildStackable', async () => {
+  const stackable = await buildStackable({
+    // @ts-expect-error
+    config: {
+      server: {
+        port: 0,
+        forceCloseConnections: true,
+        healthCheck: false,
+        logger: {
+          level: 'silent'
+        }
+      },
+      service: {
+        openapi: true
+      },
+      aiProvider: {
+        openai: {
+          model: 'gpt-3.5-turbo',
+          apiKey: ''
+        }
+      }
+    }
+  })
+
+  await stackable.start({})
+
+  // @ts-expect-error
+  const res = await stackable.inject('/documentation/json')
+  // @ts-expect-error
+  const body = JSON.parse(res.body)
+
+  assert.deepStrictEqual(Object.keys(body.paths), [
+    '/api/v1/prompt',
+    '/api/v1/stream'
+  ])
+
+  await stackable.stop()
+})
+
+it('stackable.buildStackable', async () => {
+  // @ts-expect-error
+  const app = await stackable.buildStackable({
+    config: {
+      server: {
+        port: 0,
+        forceCloseConnections: true,
+        healthCheck: false,
+        logger: {
+          level: 'silent'
+        }
+      },
+      service: {
+        openapi: true
+      },
+      aiProvider: {
+        openai: {
+          model: 'gpt-3.5-turbo',
+          apiKey: ''
+        }
+      }
+    }
+  })
+
+  await app.start({})
+
+  const res = await app.inject('/documentation/json')
+  const body = JSON.parse(res.body)
+
+  assert.deepStrictEqual(Object.keys(body.paths), [
+    '/api/v1/prompt',
+    '/api/v1/stream'
+  ])
+
+  await app.stop()
 })
