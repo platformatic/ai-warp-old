@@ -16,24 +16,25 @@ class OllamaByteSource implements UnderlyingByteSource {
   }
 
   async pull (controller: ReadableByteStreamController): Promise<void> {
-    const { done, value } = await this.response.next()
-    if (done !== undefined && done) {
-      controller.close()
-      return
-    }
+    for await (const { done, message } of this.response) {
+      let response = message.content
+      if (this.chunkCallback !== undefined) {
+        response = await this.chunkCallback(response)
+      }
 
-    let response = value.message.content
-    if (this.chunkCallback !== undefined) {
-      response = await this.chunkCallback(response)
-    }
+      const eventData: AiStreamEvent = {
+        event: 'content',
+        data: {
+          response
+        }
+      }
+      controller.enqueue(encodeEvent(eventData))
 
-    const eventData: AiStreamEvent = {
-      event: 'content',
-      data: {
-        response
+      if (done !== undefined && done) {
+        controller.close()
+        return
       }
     }
-    controller.enqueue(encodeEvent(eventData))
   }
 }
 
