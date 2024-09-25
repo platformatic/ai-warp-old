@@ -11,3 +11,4 @@ ai-warp-app*
 *gguf
 /index.*
 dist/tsconfig.tsbuildinfo
+/ai-providers

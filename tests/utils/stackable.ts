@@ -10,7 +10,7 @@ declare module 'fastify' {
 }
 
 let apps = 0
-function getPort (): number {
+export function getPort (): number {
   apps++
   return 3042 + apps
 }

@@ -1,6 +1,6 @@
 {
-  "$id": "https://schemas.platformatic.com/@platformatic/ai-warp/0.4.3.json",
-  "version": "0.4.3",
+  "$id": "https://schemas.platformatic.com/@platformatic/ai-warp/0.5.0.json",
+  "version": "0.5.0",
   "title": "Ai Warp Config",
   "type": "object",
   "properties": {

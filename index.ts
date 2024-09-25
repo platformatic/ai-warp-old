@@ -22,6 +22,11 @@ export interface AiWarpMixin {
 
 type AiGenerator = new () => Generator
 
+async function buildStackable (opts: { config: string }): Promise<StackableInterface> {
+  // eslint-disable-next-line
+  return await serviceBuildStackable(opts, stackable)
+}
+
 const stackable: Stackable<AiWarpConfig, AiGenerator> = {
   async app (app, opts) {
     const fastify = app as unknown as FastifyInstance & AiWarpMixin
@@ -57,17 +62,13 @@ const stackable: Stackable<AiWarpConfig, AiGenerator> = {
       strict: false
     },
     async transformConfig () {}
-  }
+  },
+  buildStackable
 }
 
 // break Fastify encapsulation
 // @ts-expect-error
 stackable.app[Symbol.for('skip-override')] = true
-
-async function buildStackable (opts: { config: string }): Promise<StackableInterface> {
-  // eslint-disable-next-line
-  return await serviceBuildStackable(opts, stackable.app)
-}
 
 export default stackable
 export { Generator, schema, buildStackable }
