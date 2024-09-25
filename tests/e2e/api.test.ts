@@ -424,8 +424,8 @@ it('buildStackable', async () => {
 })
 
 it('stackable.buildStackable', async () => {
-  // @ts-expect-error
   const app = await stackable.buildStackable({
+    // @ts-expect-error
     config: {
       server: {
         port: 0,
@@ -449,7 +449,9 @@ it('stackable.buildStackable', async () => {
 
   await app.start({})
 
+  // @ts-expect-error
   const res = await app.inject('/documentation/json')
+  // @ts-expect-error
   const body = JSON.parse(res.body)
 
   assert.deepStrictEqual(Object.keys(body.paths), [
