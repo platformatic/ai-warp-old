@@ -11,8 +11,7 @@ import { OLLAMA_MOCK_HOST, chatHistoryProvided as ollamaChatHistoryProvided, res
 import { mockAllProviders } from '../utils/mocks/index.js'
 import { chatHistoryProvided as openAiChatHistoryProvided, resetOpenAiMock } from '../utils/mocks/open-ai.js'
 import { chatHistoryProvided as mistralChatHistoryProvided, resetMistralMock } from '../utils/mocks/mistral.js'
-import { buildStackable } from '../../index.js'
-import stackable from '../../index.js'
+import stackable, { buildStackable } from '../../index.js'
 mockAllProviders()
 
 const expectedStreamBody = buildExpectedStreamBodyString()
