@@ -43,7 +43,7 @@
     "@fastify/rate-limit": "^10.0.0",
     "@fastify/static": "^8.0.0",
     "@fastify/type-provider-typebox": "^5.0.0",
-    "@platformatic/config": "^2.1.1",
+    "@platformatic/config": "^3.0.0",
     "@platformatic/generators": "^2.1.1",
     "@platformatic/mistral-client": "^0.1.0",
     "@platformatic/service": "^2.1.1",
