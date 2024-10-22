@@ -59,6 +59,7 @@ async function handlePrompt (prompt) {
  */
 async function promptAiWarp (message) {
   promptLock = true
+  promptButton.setAttribute('disabled', '')
 
   let chatHistoryStartIndex
   if (messages.length >= 11) {
@@ -98,6 +99,7 @@ async function promptAiWarp (message) {
     message.response[message.responseIndex] = res.body
   } catch (err) {
     promptLock = false
+    promptButton.removeAttribute('disabled')
     message.errored = true
     console.error(err)
   }
@@ -292,13 +294,10 @@ async function drawStreamedMessageContents (parent, message) {
     }
   }
 
-  // Not great, but works for now
-  message.response[message.responseIndex] = []
-  for (const line of fullResponse.split('\n')) {
-    message.response[message.responseIndex].push(line)
-  }
+  message.response[message.responseIndex] = [fullResponse]
 
   promptLock = false
+  promptButton.removeAttribute('disabled')
 }
 
 /**
