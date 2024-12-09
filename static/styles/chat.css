@@ -105,3 +105,11 @@
 #prompt-button:hover {
     cursor: pointer;
 }
+
+#prompt-button:disabled {
+    cursor: not-allowed;
+}
+
+#prompt-button:disabled img {
+    opacity: 0.2;
+}
