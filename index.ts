@@ -31,6 +31,7 @@ const stackable: Stackable<AiWarpConfig, AiGenerator> = {
   async app (app, opts) {
     const fastify = app as unknown as FastifyInstance & AiWarpMixin
     const { config } = fastify.platformatic
+    // @ts-expect-error
     await fastify.register(fastifyUser as any, config.auth)
     await fastify.register(authPlugin, opts)
 

@@ -1,9 +1,10 @@
 import { ReadableStream, UnderlyingByteSource, ReadableByteStreamController } from 'stream/web'
 import { Ollama, ChatResponse, Message } from 'ollama'
+import type { AbortableAsyncIterator } from 'ollama/src/utils.js'
 import { AiProvider, ChatHistory, StreamChunkCallback } from './provider.js'
 import { AiStreamEvent, encodeEvent } from './event.js'
 
-type OllamaStreamResponse = AsyncGenerator<ChatResponse>
+type OllamaStreamResponse = AbortableAsyncIterator<ChatResponse>
 
 class OllamaByteSource implements UnderlyingByteSource {
   type: 'bytes' = 'bytes'
@@ -74,6 +75,7 @@ export class OllamaProvider implements AiProvider {
       stream: true
     })
 
+    // @ts-expect-error polyfill type mismatch
     return new ReadableStream(new OllamaByteSource(response, chunkCallback))
   }
 
