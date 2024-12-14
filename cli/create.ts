@@ -24,7 +24,7 @@ async function execute (): Promise<void> {
   const generator = new Generator()
 
   const config = {
-    port: parseInt(args.values.port as string),
+    port: parseInt(args.values.port),
     hostname: args.values.hostname,
     plugin: args.values.plugin,
     tests: args.values.tests,

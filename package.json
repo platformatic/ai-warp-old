@@ -27,32 +27,32 @@
     "node": ">=20.16.0"
   },
   "devDependencies": {
-    "@reporters/github": "^1.7.0",
-    "fastify": "^5.0.0",
+    "@reporters/github": "^1.7.2",
+    "fastify": "^5.2.0",
     "markdownlint-cli2": "^0.13.0",
-    "node-llama-cpp": "^2.8.9",
+    "node-llama-cpp": "^2.8.16",
     "snazzy": "^9.0.0",
     "ts-standard": "^12.0.2",
-    "tsd": "^0.31.0",
-    "tsx": "^4.7.2",
-    "typescript": "^5.3.3"
+    "tsd": "^0.31.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
   },
   "dependencies": {
     "@azure/openai": "^1.0.0-beta.12",
     "@fastify/error": "^4.0.0",
-    "@fastify/rate-limit": "^10.0.0",
-    "@fastify/static": "^8.0.0",
-    "@fastify/type-provider-typebox": "^5.0.0",
+    "@fastify/rate-limit": "^10.2.1",
+    "@fastify/static": "^8.0.3",
+    "@fastify/type-provider-typebox": "^5.1.0",
     "@platformatic/config": "^2.1.1",
     "@platformatic/generators": "^2.1.1",
     "@platformatic/mistral-client": "^0.1.0",
-    "@platformatic/service": "^2.1.1",
-    "esmock": "^2.6.5",
+    "@platformatic/service": "^2.24.0",
+    "esmock": "^2.6.9",
     "fast-json-stringify": "^6.0.0",
-    "fastify-user": "^1.0.0",
-    "json-schema-to-typescript": "^15.0.0",
-    "ollama": "^0.5.0",
-    "openai": "^4.28.4"
+    "fastify-user": "^1.4.0",
+    "json-schema-to-typescript": "^15.0.3",
+    "ollama": "^0.5.11",
+    "openai": "^4.76.3"
   },
   "license": "Apache-2.0",
   "overrides": {
