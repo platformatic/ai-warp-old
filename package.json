@@ -52,7 +52,7 @@
     "fastify-user": "^1.4.0",
     "json-schema-to-typescript": "^15.0.3",
     "ollama": "^0.5.11",
-    "openai": "^4.76.3"
+    "openai": "^5.0.0"
   },
   "license": "Apache-2.0",
   "overrides": {
